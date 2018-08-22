@@ -10,12 +10,10 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         int saveIndex = -index - 1;
         System.arraycopy(storage, saveIndex, storage, saveIndex + 1, size - saveIndex);
         storage[saveIndex] = r;
-        size++;
     }
 
     protected void remove(int index) {
         System.arraycopy(storage, index + 1, storage, index, size - index - 1);
-        size--;
     }
 
     @Override
