@@ -1,6 +1,8 @@
-import model.Resume;
-import storage.SortedArrayStorage;
-import storage.Storage;
+package ru.javawebinar.basejava;
+
+import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.storage.SortedArrayStorage;
+import ru.javawebinar.basejava.storage.Storage;
 
 /**
  * Test for your ArrayStorage implementation
