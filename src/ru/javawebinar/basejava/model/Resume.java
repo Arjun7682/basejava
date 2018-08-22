@@ -6,7 +6,7 @@ package ru.javawebinar.basejava.model;
 public class Resume implements Comparable<Resume> {
 
     // Unique identifier
-    String uuid;
+    private String uuid;
 
     @Override
     public String toString() {
