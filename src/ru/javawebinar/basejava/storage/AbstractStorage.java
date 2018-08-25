@@ -27,7 +27,33 @@ public abstract class AbstractStorage implements Storage {
         return getElement(uuid);
     }
 
+    @Override
+    public void update(Resume r) {
+        if (!isExist(r)) {
+            throw new NotExistStorageException(r.getUuid());
+        } else {
+            Resume newResume = new Resume(r.getUuid());
+            saveChanges(newResume);
+        }
+    }
+
+    @Override
+    public void delete(String uuid) {
+        Resume r = getElement(uuid);
+        if (!isExist(r)) {
+            throw new NotExistStorageException(uuid);
+        } else {
+            delResume(uuid);
+        }
+    }
+
+    protected abstract void delResume(String uuid);
+
+    protected abstract void saveChanges(Resume r);
+
     protected abstract void insertElement(Resume r);
+
     protected abstract boolean isExist(Resume r);
+
     protected abstract Resume getElement(String uuid);
 }

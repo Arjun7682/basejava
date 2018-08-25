@@ -1,7 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.HashMap;
@@ -29,6 +27,21 @@ public class MapStorage extends AbstractStorage {
     @Override
     public Resume[] getAll() {
         return storage.values().toArray(new Resume[storage.size()]);
+    }
+
+    @Override
+    protected void saveChanges(Resume r) {
+        storage.put(r.getUuid(), r);
+    }
+
+    @Override
+    protected void delResume(String uuid) {
+        storage.remove(uuid);
+    }
+
+    @Override
+    public int size() {
+        return storage.size();
     }
 
     @Override
