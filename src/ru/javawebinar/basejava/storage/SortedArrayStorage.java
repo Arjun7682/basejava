@@ -6,13 +6,13 @@ import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
 
-    protected void add(Resume r, int index) {
+    protected void insertElement(Resume r, int index) {
         int saveIndex = -index - 1;
         System.arraycopy(storage, saveIndex, storage, saveIndex + 1, size - saveIndex);
         storage[saveIndex] = r;
     }
 
-    protected void remove(int index) {
+    protected void fillDeletedElement(int index) {
         System.arraycopy(storage, index + 1, storage, index, size - index - 1);
     }
 

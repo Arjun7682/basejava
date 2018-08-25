@@ -1,39 +1,37 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
     @Override
-    public void save(Resume r) {
+    protected void insertElement(Resume r) {
         int index = getIndex(r.getUuid());
-        if (index > -1) {
-            throw new ExistStorageException(r.getUuid());
-        } else if (size == STORAGE_LIMIT) {
+        insertElement(r, index);
+        size++;
+    }
+
+    protected abstract void insertElement(Resume r, int index);
+    protected abstract int getIndex(String uuid);
+
+    @Override
+    protected void checkSaveExceptions(Resume r) throws StorageException {
+        super.checkSaveExceptions(r);
+        if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
-        } else {
-            add(r, index);
-            size++;
         }
     }
 
-    protected abstract void add(Resume r, int index);
-
     @Override
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        return storage[index];
+    protected Resume getElement(String uuid) {
+        return storage[getIndex(uuid)];
     }
 
     @Override
@@ -57,13 +55,13 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index < 0) {
             throw new NotExistStorageException(uuid);
         } else {
-            remove(index);
+            fillDeletedElement(index);
             storage[size - 1] = null;
             size--;
         }
     }
 
-    protected abstract void remove(int index);
+    protected abstract void fillDeletedElement(int index);
 
     @Override
     public void clear() {
@@ -71,7 +69,10 @@ public abstract class AbstractArrayStorage implements Storage {
         size = 0;
     }
 
-    protected abstract int getIndex(String uuid);
+    @Override
+    protected boolean isExist(Resume r) {
+        return getIndex(r.getUuid()) > -1;
+    }
 
     @Override
     public int size() {
