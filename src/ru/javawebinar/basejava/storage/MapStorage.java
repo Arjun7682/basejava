@@ -50,11 +50,6 @@ public class MapStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected int getIndex(String uuid) {
-        return 0;
-    }
-
-    @Override
     protected Resume getSearchKey(String uuid) {
         return storage.get(uuid);
     }

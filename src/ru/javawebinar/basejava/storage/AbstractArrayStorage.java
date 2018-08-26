@@ -65,4 +65,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     protected abstract void fillDeletedElement(int index);
+
+    protected abstract int getIndex(String uuid);
 }

@@ -36,13 +36,12 @@ public class ListStorage extends AbstractStorage<Integer> {
 
     @Override
     protected void saveChanges(Integer index, Resume r) {
-        storage.remove(index.intValue());
-        insertElement(index, r);
+        storage.set(index, r);
     }
 
     @Override
     protected void delResume(Integer index) {
-        storage.remove(storage.get(index));
+        storage.remove(index.intValue());
     }
 
     @Override
@@ -51,18 +50,12 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected int getIndex(String uuid) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).getUuid().equals(uuid)) {
                 return i;
             }
         }
-        return -1;
-    }
-
-    @Override
-    protected Integer getSearchKey(String uuid) {
-        int index = getIndex(uuid);
-        return index == -1 ? null : index;
+        return null;
     }
 }

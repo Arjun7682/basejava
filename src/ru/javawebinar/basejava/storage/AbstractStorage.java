@@ -60,7 +60,5 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     protected abstract Resume getElement(SK searchKey);
 
-    protected abstract int getIndex(String uuid);
-
     protected abstract SK getSearchKey(String uuid);
 }
