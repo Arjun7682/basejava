@@ -5,7 +5,7 @@ import ru.javawebinar.basejava.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage {
+public class ListStorage extends AbstractStorage<Integer> {
 
     List<Resume> storage = new ArrayList<>();
 
@@ -15,18 +15,13 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void insertElement(Resume r) {
+    protected void insertElement(Integer index, Resume r) {
         storage.add(r);
     }
 
     @Override
-    protected Resume getElement(String uuid) {
-        for (Resume r : storage) {
-            if (r.getUuid().equals(uuid)) {
-                return r;
-            }
-        }
-        return null;
+    protected Resume getElement(Integer index) {
+        return storage.get(index);
     }
 
     @Override
@@ -40,18 +35,34 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void saveChanges(Resume r) {
-        delResume(r.getUuid());
-        insertElement(r);
+    protected void saveChanges(Integer index, Resume r) {
+        storage.remove(index.intValue());
+        insertElement(index, r);
     }
 
     @Override
-    protected void delResume(String uuid) {
-        storage.remove(getElement(uuid));
+    protected void delResume(Integer index) {
+        storage.remove(storage.get(index));
     }
 
     @Override
-    protected boolean isExist(Resume r) {
-        return storage.contains(r);
+    protected boolean isExist(Integer index) {
+        return index != null;
+    }
+
+    @Override
+    protected int getIndex(String uuid) {
+        for (int i = 0; i < storage.size(); i++) {
+            if (storage.get(i).getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    protected Integer getSearchKey(String uuid) {
+        int index = getIndex(uuid);
+        return index == -1 ? null : index;
     }
 }

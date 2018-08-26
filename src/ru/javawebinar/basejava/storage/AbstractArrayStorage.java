@@ -5,33 +5,22 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected static final int STORAGE_LIMIT = 10000;
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
     @Override
-    protected void insertElement(Resume r) {
-        int index = getIndex(r.getUuid());
-        insertElement(r, index);
-        size++;
-    }
-
-    protected abstract void insertElement(Resume r, int index);
-
-    protected abstract int getIndex(String uuid);
-
-    @Override
-    protected void checkSaveExceptions(Resume r) throws StorageException {
-        super.checkSaveExceptions(r);
+    protected void checkSaveExceptions(Integer index, Resume r) throws StorageException {
+        super.checkSaveExceptions(index, r);
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
         }
     }
 
     @Override
-    protected Resume getElement(String uuid) {
-        return storage[getIndex(uuid)];
+    protected Resume getElement(Integer index) {
+        return storage[index];
     }
 
     @Override
@@ -40,18 +29,16 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void saveChanges(Resume r) {
-        storage[getIndex(r.getUuid())] = r;
+    protected void saveChanges(Integer index, Resume r) {
+        storage[index] = r;
     }
 
     @Override
-    protected void delResume(String uuid) {
-        fillDeletedElement(getIndex(uuid));
+    protected void delResume(Integer index) {
+        fillDeletedElement(index);
         storage[size - 1] = null;
         size--;
     }
-
-    protected abstract void fillDeletedElement(int index);
 
     @Override
     public void clear() {
@@ -60,12 +47,22 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Resume r) {
-        return getIndex(r.getUuid()) > -1;
+    protected boolean isExist(Integer index) {
+        if (index < 0 || index >= size) {
+            return false;
+        }
+        return storage[index] != null;
+    }
+
+    @Override
+    protected Integer getSearchKey(String uuid) {
+        return getIndex(uuid);
     }
 
     @Override
     public int size() {
         return size;
     }
+
+    protected abstract void fillDeletedElement(int index);
 }

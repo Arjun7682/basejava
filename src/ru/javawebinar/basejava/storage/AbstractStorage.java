@@ -5,55 +5,62 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
-public abstract class AbstractStorage implements Storage {
+public abstract class AbstractStorage<SK> implements Storage {
 
     @Override
     public void save(Resume r) {
-        checkSaveExceptions(r);
-        insertElement(r);
+        SK searchKey = getSearchKey(r.getUuid());
+        checkSaveExceptions(searchKey, r);
+        insertElement(searchKey, r);
     }
 
-    protected void checkSaveExceptions(Resume r) throws StorageException {
-        if (isExist(r)) {
+    protected void checkSaveExceptions(SK searchKey, Resume r) throws StorageException {
+        if (isExist(searchKey)) {
             throw new ExistStorageException(r.getUuid());
         }
     }
 
     @Override
     public Resume get(String uuid) {
-        if (!isExist(new Resume(uuid))) {
+        SK searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         }
-        return getElement(uuid);
+        return getElement(searchKey);
     }
 
     @Override
     public void update(Resume r) {
-        if (!isExist(r)) {
+        SK searchKey = getSearchKey(r.getUuid());
+        if (!isExist(searchKey)) {
             throw new NotExistStorageException(r.getUuid());
         } else {
             Resume newResume = new Resume(r.getUuid());
-            saveChanges(newResume);
+            saveChanges(searchKey, newResume);
         }
     }
 
     @Override
     public void delete(String uuid) {
-        Resume r = getElement(uuid);
-        if (!isExist(r)) {
+        SK searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         } else {
-            delResume(uuid);
+            delResume(searchKey);
         }
     }
 
-    protected abstract void delResume(String uuid);
+    protected abstract void delResume(SK searchKey);
 
-    protected abstract void saveChanges(Resume r);
+    protected abstract void saveChanges(SK searchKey, Resume r);
 
-    protected abstract void insertElement(Resume r);
+    protected abstract void insertElement(SK searchKey, Resume r);
 
-    protected abstract boolean isExist(Resume r);
+    protected abstract boolean isExist(SK searchKey);
 
-    protected abstract Resume getElement(String uuid);
+    protected abstract Resume getElement(SK searchKey);
+
+    protected abstract int getIndex(String uuid);
+
+    protected abstract SK getSearchKey(String uuid);
 }
