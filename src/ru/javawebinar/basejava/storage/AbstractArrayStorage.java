@@ -11,14 +11,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected int size = 0;
 
     @Override
-    protected void checkSaveExceptions(Integer index, Resume r) throws StorageException {
-        super.checkSaveExceptions(index, r);
-        if (size == STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", r.getUuid());
-        }
-    }
-
-    @Override
     protected Resume getElement(Integer index) {
         return storage[index];
     }
@@ -31,6 +23,16 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     @Override
     protected void saveChanges(Integer index, Resume r) {
         storage[index] = r;
+    }
+
+    protected void doSave(Integer searchKey, Resume r) {
+        if (size == STORAGE_LIMIT) {
+            throw new StorageException("Storage overflow", r.getUuid());
+        } else {
+            insertElement(searchKey, r);
+            size++;
+        }
+
     }
 
     @Override
@@ -48,15 +50,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
 
     @Override
     protected boolean isExist(Integer index) {
-        if (index < 0 || index >= size) {
-            return false;
-        }
-        return storage[index] != null;
-    }
-
-    @Override
-    protected Integer getSearchKey(String uuid) {
-        return getIndex(uuid);
+        return index >= 0 && index < size && storage[index] != null;
     }
 
     @Override
@@ -66,5 +60,5 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
 
     protected abstract void fillDeletedElement(int index);
 
-    protected abstract int getIndex(String uuid);
+    protected abstract void insertElement(Integer searchKey, Resume r);
 }

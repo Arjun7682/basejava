@@ -5,7 +5,7 @@ import ru.javawebinar.basejava.model.Resume;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapStorage extends AbstractStorage<Resume> {
+public class MapResumeStorage extends AbstractStorage<Resume> {
 
     Map<String, Resume> storage = new HashMap<>();
 
@@ -15,7 +15,7 @@ public class MapStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected void insertElement(Resume t, Resume r) {
+    protected void doSave(Resume t, Resume r) {
         storage.put(r.getUuid(), r);
     }
 
