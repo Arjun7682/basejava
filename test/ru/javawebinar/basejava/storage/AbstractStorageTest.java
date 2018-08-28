@@ -58,18 +58,6 @@ public abstract class AbstractStorageTest {
     public void get() throws Exception {
         Assert.assertEquals(storage.get(UUID_1).getUuid(), UUID_1);
     }
-/*
-    @Test
-    public void getAll() throws Exception {
-        Resume[] resumes = storage.getAll();
-        Arrays.sort(resumes);
-        Assert.assertEquals(resumes.length, storage.size());
-        Assert.assertEquals(resumes[0], R1);
-        Assert.assertEquals(resumes[1], R2);
-        Assert.assertEquals(resumes[2], R3);
-
-    }
-*/
 
     @Test
     public void getAllSorted() throws Exception {
