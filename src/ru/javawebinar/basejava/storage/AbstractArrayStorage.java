@@ -35,7 +35,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
             insertElement(searchKey, r);
             size++;
         }
-
     }
 
     @Override
