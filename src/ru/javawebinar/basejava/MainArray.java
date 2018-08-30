@@ -67,6 +67,7 @@ public class MainArray {
     }
 
     static void printAll() {
+/*
         Resume[] all = ARRAY_STORAGE.getAll();
         System.out.println("----------------------------");
         if (all.length == 0) {
@@ -77,5 +78,6 @@ public class MainArray {
             }
         }
         System.out.println("----------------------------");
+*/
     }
 }
