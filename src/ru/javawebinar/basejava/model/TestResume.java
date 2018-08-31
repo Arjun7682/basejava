@@ -34,38 +34,28 @@ public class TestResume {
         qualifications.addTextBlock("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
-        OrgContent work = new OrgContent();
-        work.addOrganization(new Organization(new Date(), null,
+        ComboContent work = new ComboContent();
+        work.addOrganization(new Org(new Date(), null,
                 "Wrike",
                 "Старший разработчик (backend)",
                 "Проектирование и разработка онлайн платформы управления проектами Wrike"));
-        work.addOrganization(new Organization(new Date(), new Date(),
+        work.addOrganization(new Org(new Date(), new Date(),
                 "RIT Center",
                 "Java архитектор",
                 "Организация процесса разработки системы ERP"));
         sections.put(SectionType.EXPERIENCE, work);
 
-        OrgContent edu = new OrgContent();
-        edu.addOrganization(new Organization(new Date(), null,
+        ComboContent edu = new ComboContent();
+        edu.addOrganization(new Org(new Date(), null,
                 "Coursera",
                 null,
                 "Functional Programming Principles in Scala\" by Martin Odersky"));
-        edu.addOrganization(new Organization(new Date(), new Date(),
+        edu.addOrganization(new Org(new Date(), new Date(),
                 "Luxoft",
                 null,
                 "Курс \"Объектно-ориентированный анализ"));
         sections.put(SectionType.EDUCATION, edu);
 
         return resume;
-    }
-
-    public static void printResume(Resume resume) {
-        System.out.println(resume.getFullName());
-        System.out.println();
-
-        for (Map.Entry<>) {
-
-        }
-
     }
 }

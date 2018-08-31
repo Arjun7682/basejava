@@ -15,8 +15,4 @@ class StringContent extends SectionContent {
         this.content = content;
     }
 
-    @Override
-    protected void print() {
-        System.out.println(content);
-    }
 }
