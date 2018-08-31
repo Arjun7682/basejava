@@ -14,30 +14,28 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected void doSave(Resume key, Resume r) {
-        storage.put(r.getUuid(), r);
+    protected void doSave(Resume key, Resume resume) {
+        storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume getElement(Resume r) {
-        return r;
+    protected Resume getElement(Resume resume) {
+        return resume;
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> list = new ArrayList<>(storage.values());
-        Collections.sort(list);
-        return list;
+    public List<Resume> getData() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override
-    protected void saveChanges(Resume t, Resume r) {
-        storage.put(r.getUuid(), r);
+    protected void saveChanges(Resume key, Resume resume) {
+        storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void delResume(Resume r) {
-        storage.remove(r.getUuid());
+    protected void delResume(Resume resume) {
+        storage.remove(resume.getUuid());
     }
 
     @Override
@@ -46,8 +44,8 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected boolean isExist(Resume r) {
-        return storage.containsValue(r);
+    protected boolean isExist(Resume resume) {
+        return storage.containsValue(resume);
     }
 
     @Override

@@ -8,10 +8,10 @@ import java.util.Comparator;
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
-    protected void insertElement(Integer index, Resume r) {
+    protected void insertElement(Integer index, Resume resume) {
         int saveIndex = -index - 1;
         System.arraycopy(storage, saveIndex, storage, saveIndex + 1, size - saveIndex);
-        storage[saveIndex] = r;
+        storage[saveIndex] = resume;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected Integer getSearchKey(String uuid) {
-        Resume searchKey = new Resume(uuid);
+        Resume searchKey = new Resume(uuid, "tmp");
         return Arrays.binarySearch(storage, 0, size, searchKey, Comparator.comparing(Resume::getUuid));
     }
 }

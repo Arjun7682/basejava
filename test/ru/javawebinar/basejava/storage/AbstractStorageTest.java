@@ -7,7 +7,7 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,13 +15,13 @@ public abstract class AbstractStorageTest {
     protected Storage storage;
 
     private static final String UUID_1 = "uuid1";
-    public static final Resume R1 = new Resume(UUID_1);
+    public static final Resume R1 = new Resume(UUID_1, "name1");
 
     private static final String UUID_2 = "uuid2";
-    public static final Resume R2 = new Resume(UUID_2);
+    public static final Resume R2 = new Resume(UUID_2, "name2");
 
     private static final String UUID_3 = "uuid3";
-    public static final Resume R3 = new Resume(UUID_3);
+    public static final Resume R3 = new Resume(UUID_3, "name3");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -41,10 +41,16 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
+    public void clear() throws Exception {
+        storage.clear();
+        Assert.assertEquals(storage.size(), 0);
+    }
+
+    @Test
     public void save() throws Exception {
         final String test = "test";
         final int size = storage.size();
-        storage.save(new Resume(test));
+        storage.save(new Resume(test, "name"));
         Assert.assertEquals(storage.get(test).getUuid(), test);
         Assert.assertEquals(storage.size(), size + 1);
     }
@@ -56,24 +62,29 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void get() throws Exception {
-        Assert.assertEquals(storage.get(UUID_1).getUuid(), UUID_1);
+        Assert.assertEquals(storage.get(R1.getUuid()), R1);
     }
 
     @Test
     public void getAllSorted() throws Exception {
-        List<Resume> toCompare = new ArrayList<>();
-        toCompare.add(R1);
-        toCompare.add(R2);
-        toCompare.add(R3);
+        List<Resume> toCompare = Arrays.asList(R1, R2, R3);
         Collections.sort(toCompare);
         List<Resume> list = storage.getAllSorted();
-        Assert.assertEquals(list, toCompare);
+        Assert.assertEquals(toCompare, list);
     }
 
     @Test
     public void update() throws Exception {
-        storage.update(R3);
-        Assert.assertEquals(R3, storage.get(R3.getUuid()));
+        Resume resume = new Resume(UUID_3, "update");
+        storage.update(resume);
+        Assert.assertEquals(resume, storage.get(UUID_3));
+
+    }
+
+    @Test(expected = NotExistStorageException.class)
+    public void updateExceptionTest() throws Exception {
+        Resume resume = new Resume("not exist", "name");
+        storage.update(resume);
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -84,11 +95,6 @@ public abstract class AbstractStorageTest {
         storage.get(UUID_2);
     }
 
-    @Test
-    public void clear() throws Exception {
-        storage.clear();
-        Assert.assertEquals(storage.size(), 0);
-    }
 
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() throws Exception {

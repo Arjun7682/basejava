@@ -13,8 +13,8 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    protected void doSave(String uuid, Resume r) {
-        storage.put(uuid, r);
+    protected void doSave(String uuid, Resume resume) {
+        storage.put(uuid, resume);
     }
 
     @Override
@@ -23,15 +23,13 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> list = new ArrayList<>(storage.values());
-        Collections.sort(list);
-        return list;
+    public List<Resume> getData() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override
-    protected void saveChanges(String uuid, Resume r) {
-        storage.put(uuid, r);
+    protected void saveChanges(String uuid, Resume resume) {
+        storage.put(uuid, resume);
     }
 
     @Override
