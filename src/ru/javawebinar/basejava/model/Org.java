@@ -13,7 +13,7 @@ class Org {
         this.company = company;
     }
 
-    private class OrgEntry {
+    public class OrgEntry {
         private Date begin;
         private Date end;
         private String position;

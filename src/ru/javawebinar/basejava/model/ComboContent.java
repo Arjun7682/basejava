@@ -9,4 +9,12 @@ public class ComboContent extends SectionContent {
     public void addOrganization(Org org) {
         content.add(org);
     }
+
+    public List<Org> getContent() {
+        return content;
+    }
+
+    public void setContent(List<Org> content) {
+        this.content = content;
+    }
 }
