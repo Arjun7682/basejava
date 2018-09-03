@@ -1,59 +1,29 @@
 package ru.javawebinar.basejava.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 class Org {
-    private Date begin;
-    private Date end;
+    private List<OrgEntry> orgEntries = new ArrayList<>();
     private String company;
-    private String position;
-    private String functions;
 
-    public Org(Date begin, Date end, String company, String position, String functions) {
-        this.begin = begin;
-        this.end = end;
-        this.company = company;
-        this.position = position;
-        this.functions = functions;
-    }
-
-    public Date getBegin() {
-        return begin;
-    }
-
-    public void setBegin(Date begin) {
-        this.begin = begin;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
+    public Org(Date begin, Date end, String company, String position, String description) {
+        orgEntries.add(new OrgEntry(begin, end, position, description));
         this.company = company;
     }
 
-    public String getPosition() {
-        return position;
-    }
+    private class OrgEntry {
+        private Date begin;
+        private Date end;
+        private String position;
+        private String description;
 
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getFunctions() {
-        return functions;
-    }
-
-    public void setFunctions(String functions) {
-        this.functions = functions;
+        public OrgEntry(Date begin, Date end, String position, String description) {
+            this.begin = begin;
+            this.end = end;
+            this.position = position;
+            this.description = description;
+        }
     }
 }
