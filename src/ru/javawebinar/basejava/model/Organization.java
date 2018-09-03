@@ -2,14 +2,14 @@ package ru.javawebinar.basejava.model;
 
 import java.util.Date;
 
-class Org {
+class Organization {
     private Date begin;
     private Date end;
     private String company;
     private String position;
     private String functions;
 
-    public Org(Date begin, Date end, String company, String position, String functions) {
+    public Organization(Date begin, Date end, String company, String position, String functions) {
         this.begin = begin;
         this.end = end;
         this.company = company;

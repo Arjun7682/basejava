@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Resume implements Comparable<Resume> {
 
     private final Map<ContactType, String> contacts = new HashMap<>();
-    private final Map<SectionType, SectionContent> sections = new HashMap<>();
+    private final Map<SectionType, SectionCont> sections = new HashMap<>();
     private final String uuid;
     private String fullName;
 
@@ -35,7 +35,7 @@ public class Resume implements Comparable<Resume> {
         return contacts;
     }
 
-    public Map<SectionType, SectionContent> getSections() {
+    public Map<SectionType, SectionCont> getSections() {
         return sections;
     }
 

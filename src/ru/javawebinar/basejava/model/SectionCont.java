@@ -1,5 +1,5 @@
 package ru.javawebinar.basejava.model;
 
-abstract class SectionContent {
+abstract class SectionCont {
     //protected abstract void print();
 }
