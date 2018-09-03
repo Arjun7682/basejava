@@ -3,7 +3,7 @@ package ru.javawebinar.basejava.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComboCont extends SectionCont {
+public class ComboContent extends SectionContent {
     private List<Organization> content = new ArrayList<>();
 
     public void addOrganization(Organization org) {

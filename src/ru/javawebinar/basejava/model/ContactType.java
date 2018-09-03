@@ -9,13 +9,13 @@ enum ContactType {
     STACKOVERFLOW("Stackoverflow:"),
     HOMEPAGE("Home page:");
 
-    private String contacts;
+    private String title;
 
     ContactType(String title) {
-        this.contacts = title;
+        this.title = title;
     }
 
-    public String getContacts() {
-        return contacts;
+    public String getTitle() {
+        return title;
     }
 }

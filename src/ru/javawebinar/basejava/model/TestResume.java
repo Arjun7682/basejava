@@ -16,25 +16,25 @@ public class TestResume {
         contacts.put(ContactType.STACKOVERFLOW, "Профиль Stackoverflow");
         contacts.put(ContactType.HOMEPAGE, "Домашняя страница");
 
-        Map<SectionType, SectionCont> sections = resume.getSections();
+        Map<SectionType, SectionContent> sections = resume.getSections();
 
-        StringCont objective = new StringCont("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        StringContent objective = new StringContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
 
-        StringCont personal = new StringCont("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        StringContent personal = new StringContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         sections.put(SectionType.PERSONAL, personal);
 
-        ListCont achievement = new ListCont();
+        ListContent achievement = new ListContent();
         achievement.addTextBlock("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", ");
         achievement.addTextBlock("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. ");
         sections.put(SectionType.ACHIEVEMENT, achievement);
 
-        ListCont qualifications = new ListCont();
+        ListContent qualifications = new ListContent();
         qualifications.addTextBlock("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
         qualifications.addTextBlock("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
-        ComboCont work = new ComboCont();
+        ComboContent work = new ComboContent();
         work.addOrganization(new Organization(new Date(), null,
                 "Wrike",
                 "Старший разработчик (backend)",
@@ -45,7 +45,7 @@ public class TestResume {
                 "Организация процесса разработки системы ERP"));
         sections.put(SectionType.EXPERIENCE, work);
 
-        ComboCont edu = new ComboCont();
+        ComboContent edu = new ComboContent();
         edu.addOrganization(new Organization(new Date(), null,
                 "Coursera",
                 null,

@@ -8,13 +8,13 @@ enum SectionType {
     EXPERIENCE("Опыт работы"),
     EDUCATION("Образование");
 
-    private String content;
+    private String title;
 
     SectionType(String title) {
-        this.content = title;
+        this.title = title;
     }
 
-    public String getContent() {
-        return content;
+    public String getTitle() {
+        return title;
     }
 }
