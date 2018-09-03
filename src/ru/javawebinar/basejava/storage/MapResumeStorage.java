@@ -24,7 +24,7 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    public List<Resume> getData() {
+    public List<Resume> CopyAll() {
         return new ArrayList<>(storage.values());
     }
 
