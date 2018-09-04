@@ -1,6 +1,6 @@
 package ru.javawebinar.basejava.model;
 
-enum SectionType {
+public enum SectionType {
     OBJECTIVE("Позиция"),
     PERSONAL("Личные качества"),
     ACHIEVEMENT("Достижения"),

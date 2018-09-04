@@ -2,17 +2,17 @@ package ru.javawebinar.basejava.model;
 
 import java.util.Date;
 
-class Organization {
+public class Organization {
     private Date begin;
     private Date end;
-    private String company;
+    private Link company;
     private String position;
     private String functions;
 
-    public Organization(Date begin, Date end, String company, String position, String functions) {
+    public Organization(Date begin, Date end, String companyName, String companyURL, String position, String functions) {
         this.begin = begin;
         this.end = end;
-        this.company = company;
+        company = new Link(companyName, companyURL);
         this.position = position;
         this.functions = functions;
     }
@@ -33,11 +33,11 @@ class Organization {
         this.end = end;
     }
 
-    public String getCompany() {
+    public Link getCompany() {
         return company;
     }
 
-    public void setCompany(String company) {
+    public void setCompany(Link company) {
         this.company = company;
     }
 

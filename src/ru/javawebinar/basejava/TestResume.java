@@ -1,4 +1,6 @@
-package ru.javawebinar.basejava.model;
+package ru.javawebinar.basejava;
+
+import ru.javawebinar.basejava.model.*;
 
 import java.util.Date;
 import java.util.Map;
@@ -6,22 +8,22 @@ import java.util.Map;
 public class TestResume {
     public static Resume initTestResume(String uuid) {
         Resume resume = new Resume(uuid, "Григорий Кислин");
-        Map<ContactType, String> contacts = resume.getContacts();
+        Map<ContactType, Link> contacts = resume.getContacts();
 
-        contacts.put(ContactType.PHONE, "+7(921) 855-0482");
-        contacts.put(ContactType.SKYPE, "grigory.kislin");
-        contacts.put(ContactType.EMAIL, "gkislin@yandex.ru");
-        contacts.put(ContactType.LINKEDIN, "Профиль LinkedIn");
-        contacts.put(ContactType.GITHUB, "Профиль GitHub");
-        contacts.put(ContactType.STACKOVERFLOW, "Профиль Stackoverflow");
-        contacts.put(ContactType.HOMEPAGE, "Домашняя страница");
+        contacts.put(ContactType.PHONE, new Link("+7(921) 855-0482", null));
+        contacts.put(ContactType.SKYPE, new Link("grigory.kislin", "skype:grigory.kislin"));
+        contacts.put(ContactType.EMAIL, new Link("gkislin@yandex.ru", "gkislin@yandex.ru"));
+        contacts.put(ContactType.LINKEDIN, new Link("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin"));
+        contacts.put(ContactType.GITHUB, new Link("Профиль GitHub", "https://github.com/gkislin"));
+        contacts.put(ContactType.STACKOVERFLOW, new Link("Профиль Stackoverflow", "https://stackoverflow.com/users/548473"));
+        contacts.put(ContactType.HOMEPAGE, new Link("Домашняя страница", "http://gkislin.ru/"));
 
         Map<SectionType, SectionContent> sections = resume.getSections();
 
-        StringContent objective = new StringContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        TextContent objective = new TextContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
 
-        StringContent personal = new StringContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        TextContent personal = new TextContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         sections.put(SectionType.PERSONAL, personal);
 
         ListContent achievement = new ListContent();
@@ -37,10 +39,12 @@ public class TestResume {
         ComboContent work = new ComboContent();
         work.addOrganization(new Organization(new Date(), null,
                 "Wrike",
+                "https://www.wrike.com/",
                 "Старший разработчик (backend)",
                 "Проектирование и разработка онлайн платформы управления проектами Wrike"));
         work.addOrganization(new Organization(new Date(), new Date(),
                 "RIT Center",
+                null,
                 "Java архитектор",
                 "Организация процесса разработки системы ERP"));
         sections.put(SectionType.EXPERIENCE, work);
@@ -48,10 +52,12 @@ public class TestResume {
         ComboContent edu = new ComboContent();
         edu.addOrganization(new Organization(new Date(), null,
                 "Coursera",
+                "https://www.coursera.org/course/progfun",
                 null,
                 "Functional Programming Principles in Scala\" by Martin Odersky"));
         edu.addOrganization(new Organization(new Date(), new Date(),
                 "Luxoft",
+                "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
                 null,
                 "Курс \"Объектно-ориентированный анализ"));
         sections.put(SectionType.EDUCATION, edu);
