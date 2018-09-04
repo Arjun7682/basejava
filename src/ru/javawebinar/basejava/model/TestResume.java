@@ -16,41 +16,41 @@ public class TestResume {
         contacts.put(ContactType.STACKOVERFLOW, "Профиль Stackoverflow");
         contacts.put(ContactType.HOMEPAGE, "Домашняя страница");
 
-        Map<SectionType, SectionContent> sections = resume.getSections();
+        Map<SectionType, Section> sections = resume.getSections();
 
-        StringContent objective = new StringContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        TextSection objective = new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
 
-        StringContent personal = new StringContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        TextSection personal = new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         sections.put(SectionType.PERSONAL, personal);
 
-        ListContent achievement = new ListContent();
+        ListSection achievement = new ListSection();
         achievement.addTextBlock("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", ");
         achievement.addTextBlock("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. ");
         sections.put(SectionType.ACHIEVEMENT, achievement);
 
-        ListContent qualifications = new ListContent();
+        ListSection qualifications = new ListSection();
         qualifications.addTextBlock("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
         qualifications.addTextBlock("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
-        ComboContent work = new ComboContent();
-        work.addOrganization(new Org(new Date(), null,
+        OrganizationSection work = new OrganizationSection();
+        work.addOrganization(new Organization(new Date(), null,
                 "Wrike",
                 "Старший разработчик (backend)",
                 "Проектирование и разработка онлайн платформы управления проектами Wrike"));
-        work.addOrganization(new Org(new Date(), new Date(),
+        work.addOrganization(new Organization(new Date(), new Date(),
                 "RIT Center",
                 "Java архитектор",
                 "Организация процесса разработки системы ERP"));
         sections.put(SectionType.EXPERIENCE, work);
 
-        ComboContent edu = new ComboContent();
-        edu.addOrganization(new Org(new Date(), null,
+        OrganizationSection edu = new OrganizationSection();
+        edu.addOrganization(new Organization(new Date(), null,
                 "Coursera",
                 null,
                 "Functional Programming Principles in Scala\" by Martin Odersky"));
-        edu.addOrganization(new Org(new Date(), new Date(),
+        edu.addOrganization(new Organization(new Date(), new Date(),
                 "Luxoft",
                 null,
                 "Курс \"Объектно-ориентированный анализ"));

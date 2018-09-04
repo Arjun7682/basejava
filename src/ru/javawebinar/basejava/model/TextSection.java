@@ -1,9 +1,9 @@
 package ru.javawebinar.basejava.model;
 
-class StringContent extends SectionContent {
+class TextSection extends Section {
     private String content;
 
-    public StringContent(String content) {
+    public TextSection(String content) {
         this.content = content;
     }
 

@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-class Org {
+class Organization {
     private List<OrgEntry> orgEntries = new ArrayList<>();
     private String company;
 
-    public Org(Date begin, Date end, String company, String position, String description) {
+    public Organization(Date begin, Date end, String company, String position, String description) {
         orgEntries.add(new OrgEntry(begin, end, position, description));
         this.company = company;
     }
+
+    //public void addPositin
 
     public class OrgEntry {
         private Date begin;
