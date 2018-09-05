@@ -50,16 +50,21 @@ public class TestResume {
         sections.put(SectionType.EXPERIENCE, work);
 
         OrganizationSection edu = new OrganizationSection();
+
         edu.addOrganization(new Organization(new Date(), null,
                 "Coursera",
                 "https://www.coursera.org/course/progfun",
-                null,
-                "Functional Programming Principles in Scala\" by Martin Odersky"));
-        edu.addOrganization(new Organization(new Date(), new Date(),
+                "Functional Programming Principles in Scala\" by Martin Odersky",
+                null));
+        Organization organization = new Organization(new Date(), new Date(),
                 "Luxoft",
                 "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
-                null,
-                "Курс \"Объектно-ориентированный анализ"));
+                "Курс \"Объектно-ориентированный анализ",
+                null);
+        organization.addPosition(new Date(), new Date(),
+                "Аспирантура (программист С, С++)",
+                null);
+        edu.addOrganization(organization);
         sections.put(SectionType.EDUCATION, edu);
 
         return resume;

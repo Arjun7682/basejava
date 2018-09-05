@@ -5,6 +5,10 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +28,12 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void saveChanges(File searchKey, Resume r) {
-
+    protected void saveChanges(File file, Resume resume) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
+            oos.writeObject(resume);
+        } catch (IOException e) {
+            throw new StorageException(e.getMessage(), resume.getUuid(), e);
+        }
     }
 
     @Override
@@ -39,13 +47,23 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected Resume getElement(File searchKey) {
-        return null;
+    protected Resume getElement(File file) {
+        Resume resume = null;
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file.toPath()))) {
+            resume = (Resume) ois.readObject();
+        } catch (Exception e) {
+            throw new StorageException(e.getMessage(), resume.getUuid(), e);
+        }
+        return resume;
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        return null;
+    protected List<Resume> CopyAll() {
+        List<Resume> list = new ArrayList<>();
+        for (File file : directory.listFiles()) {
+            list.add(getElement(file));
+        }
+        return list;
     }
 
     @Override
@@ -54,8 +72,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void delResume(File searchKey) {
-
+    protected void delResume(File file) {
+        file.delete();
     }
 
     @Override
@@ -65,12 +83,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        return 0;
+        return directory.listFiles().length;
     }
 
     @Override
     public void clear() {
-
+        for (File file : directory.listFiles()) {
+            file.delete();
+        }
     }
 
     protected abstract void doWrite(Resume resume, File file) throws IOException;
