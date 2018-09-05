@@ -18,25 +18,25 @@ public class TestResume {
         contacts.put(ContactType.STACKOVERFLOW, new Link("Профиль Stackoverflow", "https://stackoverflow.com/users/548473"));
         contacts.put(ContactType.HOMEPAGE, new Link("Домашняя страница", "http://gkislin.ru/"));
 
-        Map<SectionType, SectionContent> sections = resume.getSections();
+        Map<SectionType, Section> sections = resume.getSections();
 
-        TextContent objective = new TextContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        TextSection objective = new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
 
-        TextContent personal = new TextContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        TextSection personal = new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         sections.put(SectionType.PERSONAL, personal);
 
-        ListContent achievement = new ListContent();
+        ListSection achievement = new ListSection();
         achievement.addTextBlock("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", ");
         achievement.addTextBlock("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. ");
         sections.put(SectionType.ACHIEVEMENT, achievement);
 
-        ListContent qualifications = new ListContent();
+        ListSection qualifications = new ListSection();
         qualifications.addTextBlock("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
         qualifications.addTextBlock("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
-        ComboContent work = new ComboContent();
+        OrganizationSection work = new OrganizationSection();
         work.addOrganization(new Organization(new Date(), null,
                 "Wrike",
                 "https://www.wrike.com/",
@@ -49,7 +49,7 @@ public class TestResume {
                 "Организация процесса разработки системы ERP"));
         sections.put(SectionType.EXPERIENCE, work);
 
-        ComboContent edu = new ComboContent();
+        OrganizationSection edu = new OrganizationSection();
         edu.addOrganization(new Organization(new Date(), null,
                 "Coursera",
                 "https://www.coursera.org/course/progfun",
