@@ -9,4 +9,12 @@ public class ListSection extends Section {
     public void addTextBlock(String text) {
         content.add(text);
     }
+
+    public List<String> getContent() {
+        return content;
+    }
+
+    public void setContent(List<String> content) {
+        this.content = content;
+    }
 }

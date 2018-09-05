@@ -9,4 +9,12 @@ public class OrganizationSection extends Section {
     public void addOrganization(Organization org) {
         content.add(org);
     }
+
+    public List<Organization> getContent() {
+        return content;
+    }
+
+    public void setContent(List<Organization> content) {
+        this.content = content;
+    }
 }

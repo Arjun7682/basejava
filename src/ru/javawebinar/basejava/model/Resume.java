@@ -4,9 +4,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Initial resume class
- */
 public class Resume implements Comparable<Resume> {
 
     private final Map<ContactType, Link> contacts = new EnumMap<>(ContactType.class);
