@@ -2,7 +2,7 @@ package ru.javawebinar.basejava;
 
 import ru.javawebinar.basejava.model.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 
 public class TestResume {
@@ -37,34 +37,33 @@ public class TestResume {
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
         OrganizationSection work = new OrganizationSection();
-        work.addOrganization(new Organization(new Date(), null,
-                "Wrike",
-                "https://www.wrike.com/",
-                "Старший разработчик (backend)",
-                "Проектирование и разработка онлайн платформы управления проектами Wrike"));
-        work.addOrganization(new Organization(new Date(), new Date(),
-                "RIT Center",
-                null,
-                "Java архитектор",
-                "Организация процесса разработки системы ERP"));
+        work.addOrganization(new Organization(
+                new Link("Wrike", "https://www.wrike.com/"),
+                new Organization.Position(LocalDate.now(), null,
+                        "Старший разработчик (backend)",
+                        "Проектирование и разработка онлайн платформы управления проектами Wrike")));
+        work.addOrganization(new Organization(
+                new Link("RIT Center", null),
+                new Organization.Position(LocalDate.now(), LocalDate.now(),
+                        "Java архитектор",
+                        "Организация процесса разработки системы ERP")));
         sections.put(SectionType.EXPERIENCE, work);
 
         OrganizationSection edu = new OrganizationSection();
 
-        edu.addOrganization(new Organization(new Date(), null,
-                "Coursera",
-                "https://www.coursera.org/course/progfun",
-                "Functional Programming Principles in Scala\" by Martin Odersky",
-                null));
-        Organization organization = new Organization(new Date(), new Date(),
-                "Luxoft",
-                "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
-                "Курс \"Объектно-ориентированный анализ",
-                null);
-        organization.addPosition(new Date(), new Date(),
-                "Аспирантура (программист С, С++)",
-                null);
-        edu.addOrganization(organization);
+        edu.addOrganization(new Organization(
+                new Link("Coursera", "https://www.coursera.org/course/progfun"),
+                new Organization.Position(LocalDate.now(), null,
+                        "Functional Programming Principles in Scala\" by Martin Odersky",
+                        null)));
+        edu.addOrganization(new Organization(
+                new Link("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366"),
+                new Organization.Position(LocalDate.now(), LocalDate.now(),
+                        "Курс Объектно-ориентированный анализ",
+                        null),
+                new Organization.Position(LocalDate.now(), LocalDate.now(),
+                        "Аспирантура (программист С, С++)",
+                        null)));
         sections.put(SectionType.EDUCATION, edu);
 
         return resume;

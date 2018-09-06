@@ -24,7 +24,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     @Override
     public void update(Resume resume) {
         SK searchKey = checkNotExistException(resume.getUuid());
-        saveChanges(searchKey, resume);
+        doUpdate(searchKey, resume);
     }
 
     @Override
@@ -35,7 +35,7 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        List<Resume> list = CopyAll();
+        List<Resume> list = copyAll();
         Collections.sort(list);
         return list;
     }
@@ -58,7 +58,7 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     protected abstract void delResume(SK searchKey);
 
-    protected abstract void saveChanges(SK searchKey, Resume resume);
+    protected abstract void doUpdate(SK searchKey, Resume resume);
 
     protected abstract boolean isExist(SK searchKey);
 
@@ -68,5 +68,5 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     protected abstract void doSave(SK searchKey, Resume resume);
 
-    protected abstract List<Resume> CopyAll();
+    protected abstract List<Resume> copyAll();
 }

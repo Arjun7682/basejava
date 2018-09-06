@@ -1,27 +1,26 @@
 package ru.javawebinar.basejava.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class Organization implements Serializable {
 
-    private List<OrgEntry> orgEntries = new ArrayList<>();
+    private List<Position> orgEntries;
     private Link company;
 
-    public Organization(Date begin, Date end, String companyName, String companyURL, String position, String description) {
-        Objects.requireNonNull(companyName, "Company name must not be null");
-        company = new Link(companyName, companyURL);
-        orgEntries.add(new OrgEntry(begin, end, position, description));
+    public Organization(Link company, Position... positions) {
+        this.orgEntries = new ArrayList<>(Arrays.asList(positions));
+        this.company = company;
     }
 
-    public List<OrgEntry> getOrgEntries() {
+    public List<Position> getOrgEntries() {
         return orgEntries;
     }
 
-    public void setOrgEntries(List<OrgEntry> orgEntries) {
+    public void setOrgEntries(List<Position> orgEntries) {
         this.orgEntries = orgEntries;
     }
 
@@ -33,15 +32,15 @@ public class Organization implements Serializable {
         this.company = company;
     }
 
-    public void addPosition(Date begin, Date end, String position, String description) {
+    public void addPosition(LocalDate begin, LocalDate end, String position, String description) {
         if (getOrgEntryIndex(position) == -1) {
-            orgEntries.add(new OrgEntry(begin, end, position, description));
+            orgEntries.add(new Position(begin, end, position, description));
         }
     }
 
     private int getOrgEntryIndex(String position) {
         for (int i = 0; i < orgEntries.size(); i++) {
-            if (orgEntries.get(i).getPosition().equals(position)) {
+            if (orgEntries.get(i).getTitle().equals(position)) {
                 return i;
             }
         }
@@ -55,53 +54,51 @@ public class Organization implements Serializable {
         }
     }
 
-    public void updatePosition(Date begin, Date end, String position, String description) {
+    public void updatePosition(LocalDate begin, LocalDate end, String position, String description) {
         int orgEntryIndex = getOrgEntryIndex(position);
         if (orgEntryIndex != -1) {
-            OrgEntry entry = orgEntries.get(orgEntryIndex);
+            Position entry = orgEntries.get(orgEntryIndex);
             entry.setBegin(begin);
             entry.setEnd(end);
             entry.setDescription(description);
         }
     }
 
-    public class OrgEntry implements Serializable {
-        private Date begin;
-        private Date end;
-        private String position;
+    public static class Position implements Serializable {
+        private LocalDate begin;
+        private LocalDate end;
+        private String title;
         private String description;
 
-        public OrgEntry(Date begin, Date end, String position, String description) {
-            Objects.requireNonNull(begin, "Date begin must not be null");
-            Objects.requireNonNull(position, "Position must not be null");
+        public Position(LocalDate begin, LocalDate end, String title, String description) {
             this.begin = begin;
             this.end = end;
-            this.position = position;
+            this.title = title;
             this.description = description;
         }
 
-        public Date getBegin() {
+        public LocalDate getBegin() {
             return begin;
         }
 
-        public void setBegin(Date begin) {
+        public void setBegin(LocalDate begin) {
             this.begin = begin;
         }
 
-        public Date getEnd() {
+        public LocalDate getEnd() {
             return end;
         }
 
-        public void setEnd(Date end) {
+        public void setEnd(LocalDate end) {
             this.end = end;
         }
 
-        public String getPosition() {
-            return position;
+        public String getTitle() {
+            return title;
         }
 
-        public void setPosition(String position) {
-            this.position = position;
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getDescription() {

@@ -17,12 +17,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    public List<Resume> CopyAll() {
+    public List<Resume> copyAll() {
         return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
     }
 
     @Override
-    protected void saveChanges(Integer index, Resume resume) {
+    protected void doUpdate(Integer index, Resume resume) {
         storage[index] = resume;
     }
 

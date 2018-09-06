@@ -24,12 +24,12 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    public List<Resume> CopyAll() {
+    public List<Resume> copyAll() {
         return new ArrayList<>(storage.values());
     }
 
     @Override
-    protected void saveChanges(Resume key, Resume resume) {
+    protected void doUpdate(Resume key, Resume resume) {
         storage.put(resume.getUuid(), resume);
     }
 

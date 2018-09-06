@@ -25,7 +25,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    public List<Resume> CopyAll() {
+    public List<Resume> copyAll() {
         return new ArrayList<>(storage);
     }
 
@@ -35,7 +35,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected void saveChanges(Integer index, Resume resume) {
+    protected void doUpdate(Integer index, Resume resume) {
         storage.set(index, resume);
     }
 
