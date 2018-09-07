@@ -33,7 +33,7 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    protected void delResume(String uuid) {
+    protected void doDelete(String uuid) {
         storage.remove(uuid);
     }
 

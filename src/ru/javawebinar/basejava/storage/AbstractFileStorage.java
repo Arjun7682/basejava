@@ -37,21 +37,19 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void doSave(File file, Resume resume) {
         try {
             file.createNewFile();
-            doUpdate(file, resume);
         } catch (IOException e) {
             throw new StorageException("IO Error", resume.getUuid(), e);
         }
+        doUpdate(file, resume);
     }
 
     @Override
     protected Resume getElement(File file) {
-        Resume resume;
         try {
-            resume = doRead(file);
+            return doRead(file);
         } catch (Exception e) {
             throw new StorageException(e.getMessage(), "", e);
         }
-        return resume;
     }
 
     @Override
@@ -73,7 +71,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void delResume(File file) {
+    protected void doDelete(File file) {
         if (!file.delete()) {
             throw new StorageException("Error: can not delete file: " + file.getName(), "");
         }
@@ -100,7 +98,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             throw new StorageException("Directory read error.", "");
         }
         for (File file : files) {
-            delResume(file);
+            doDelete(file);
         }
     }
 
