@@ -20,7 +20,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected Resume getElement(Integer index) {
+    protected Resume doGet(Integer index) {
         return storage.get(index);
     }
 

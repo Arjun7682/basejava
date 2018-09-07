@@ -19,7 +19,7 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected Resume getElement(Resume resume) {
+    protected Resume doGet(Resume resume) {
         return resume;
     }
 

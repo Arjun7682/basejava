@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ListSection extends Section {
     private List<String> content = new ArrayList<>();
+    private static final long serialVersionUID = 1L;
 
     public void addTextBlock(String text) {
         content.add(text);

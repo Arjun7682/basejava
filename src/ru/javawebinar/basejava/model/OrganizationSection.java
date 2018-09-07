@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrganizationSection extends Section {
+    private static final long serialVersionUID = 1L;
+
     private List<Organization> content = new ArrayList<>();
 
     public void addOrganization(Organization org) {

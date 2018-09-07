@@ -22,7 +22,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     public Resume get(String uuid) {
         LOG.info("Get " + uuid);
         SK searchKey = checkNotExistException(uuid);
-        return getElement(searchKey);
+        return doGet(searchKey);
     }
 
     @Override
@@ -71,7 +71,7 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     protected abstract boolean isExist(SK searchKey);
 
-    protected abstract Resume getElement(SK searchKey);
+    protected abstract Resume doGet(SK searchKey);
 
     protected abstract SK getSearchKey(String uuid);
 
