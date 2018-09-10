@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
 
+    private Serializer serializer;
     private File directory;
 
-    protected AbstractFileStorage(File directory) {
+    protected FileStorage(File directory, Serializer serializer) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -21,12 +22,13 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable|writable");
         }
         this.directory = directory;
+        this.serializer = serializer;
     }
 
     @Override
     protected void doUpdate(File file, Resume resume) {
         try {
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
+            serializer.doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException(e.getMessage(), resume.getUuid(), e);
         }
@@ -45,20 +47,16 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return serializer.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (Exception e) {
-            throw new StorageException(e.getMessage(), "", e);
+            throw new StorageException(e.getMessage(), null, e);
         }
     }
 
     @Override
     protected List<Resume> copyAll() {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error.", "");
-        }
         List<Resume> list = new ArrayList<>();
-        for (File file : files) {
+        for (File file : getFilesList()) {
             list.add(doGet(file));
         }
         return list;
@@ -83,26 +81,22 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error.", "");
-        }
-        return files.length;
+        return getFilesList().length;
     }
 
     @Override
     public void clear() {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error.", "");
-        }
-        for (File file : files) {
+        for (File file : getFilesList()) {
             doDelete(file);
         }
     }
 
-    protected abstract void doWrite(Resume resume, OutputStream os) throws IOException;
-
-    protected abstract Resume doRead(InputStream is) throws IOException;
+    private File[] getFilesList() {
+        File[] files = directory.listFiles();
+        if (files == null) {
+            throw new StorageException("Directory read error", null);
+        }
+        return files;
+    }
 }
 
