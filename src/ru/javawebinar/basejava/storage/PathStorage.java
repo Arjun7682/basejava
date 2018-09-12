@@ -2,21 +2,24 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.storage.Serializer.Serializer;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ObjectStreamPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private Serializer serializer;
     private Path directory;
 
-    protected ObjectStreamPathStorage(String directory, Serializer serializer) {
+    protected PathStorage(String directory, Serializer serializer) {
         Objects.requireNonNull(directory, "directory must not be null");
         this.directory = Paths.get(directory);
         if (!Files.isDirectory(this.directory) || !Files.isWritable(this.directory)) {
@@ -55,9 +58,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> copyAll() {
-        List<Resume> resumes = new ArrayList<>();
-        getFilesList().forEach(path -> resumes.add(doGet(path)));
-        return resumes;
+        return getFiles().map(this::doGet).collect(Collectors.toList());
     }
 
     @Override
@@ -81,15 +82,15 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path> {
 
     @Override
     public int size() {
-        return (int) getFilesList().count();
+        return (int) getFiles().count();
     }
 
     @Override
     public void clear() {
-        getFilesList().forEach(this::doDelete);
+        getFiles().forEach(this::doDelete);
     }
 
-    private Stream<Path> getFilesList() {
+    private Stream<Path> getFiles() {
         try {
             return Files.list(directory);
         } catch (IOException e) {

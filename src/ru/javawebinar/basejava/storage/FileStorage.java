@@ -2,6 +2,7 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.storage.Serializer.Serializer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> copyAll() {
         List<Resume> list = new ArrayList<>();
-        for (File file : getFilesList()) {
+        for (File file : getFiles()) {
             list.add(doGet(file));
         }
         return list;
@@ -81,17 +82,17 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        return getFilesList().length;
+        return getFiles().length;
     }
 
     @Override
     public void clear() {
-        for (File file : getFilesList()) {
+        for (File file : getFiles()) {
             doDelete(file);
         }
     }
 
-    private File[] getFilesList() {
+    private File[] getFiles() {
         File[] files = directory.listFiles();
         if (files == null) {
             throw new StorageException("Directory read error", null);
