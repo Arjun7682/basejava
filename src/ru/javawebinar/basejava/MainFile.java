@@ -9,12 +9,15 @@ public class MainFile {
     }
 
     public static void getFileList(File dir, String offset) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                System.out.println("Dir: " + offset + file.getName());
-                getFileList(file, "  ");
-            } else {
-                System.out.println(offset + file.getName());
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    System.out.println("Dir: " + offset + file.getName());
+                    getFileList(file, "  ");
+                } else {
+                    System.out.println(offset + file.getName());
+                }
             }
         }
     }
