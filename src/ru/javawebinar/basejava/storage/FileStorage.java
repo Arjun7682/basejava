@@ -2,7 +2,7 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
-import ru.javawebinar.basejava.storage.Serializer.Serializer;
+import ru.javawebinar.basejava.storage.serializer.Serializer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class FileStorage extends AbstractStorage<File> {
         try {
             return serializer.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (Exception e) {
-            throw new StorageException(e.getMessage(), null, e);
+            throw new StorageException("File read error", e);
         }
     }
 
@@ -71,7 +71,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected void doDelete(File file) {
         if (!file.delete()) {
-            throw new StorageException("Error: can not delete file: " + file.getName(), "");
+            throw new StorageException("Error: can not delete file: " + file.getName());
         }
     }
 
@@ -95,7 +95,7 @@ public class FileStorage extends AbstractStorage<File> {
     private File[] getFiles() {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("Directory read error", null);
+            throw new StorageException("Directory read error");
         }
         return files;
     }
