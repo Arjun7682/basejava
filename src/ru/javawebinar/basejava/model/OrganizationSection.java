@@ -8,6 +8,9 @@ public class OrganizationSection extends Section {
 
     private List<Organization> content = new ArrayList<>();
 
+    public OrganizationSection() {
+    }
+
     public void addOrganization(Organization org) {
         content.add(org);
     }

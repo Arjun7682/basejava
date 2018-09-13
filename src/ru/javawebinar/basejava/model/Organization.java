@@ -1,16 +1,25 @@
 package ru.javawebinar.basejava.model;
 
+import ru.javawebinar.basejava.util.LocalDateAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<Position> orgEntries;
     private Link company;
+
+    public Organization() {
+    }
 
     public Organization(Link company, Position... positions) {
         this.orgEntries = new ArrayList<>(Arrays.asList(positions));
@@ -65,13 +74,19 @@ public class Organization implements Serializable {
         }
     }
 
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
         private static final long serialVersionUID = 1L;
 
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate begin;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate end;
         private String title;
         private String description;
+
+        public Position() {
+        }
 
         public Position(LocalDate begin, LocalDate end, String title, String description) {
             this.begin = begin;

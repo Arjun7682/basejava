@@ -8,6 +8,9 @@ public class Link implements Serializable {
     private String text;
     private String url;
 
+    public Link() {
+    }
+
     public Link(String text, String url) {
         this.text = text;
         this.url = url;
