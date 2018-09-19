@@ -10,6 +10,10 @@ public class ListSection extends Section {
     public ListSection() {
     }
 
+    public ListSection(List<String> content) {
+        this.content = content;
+    }
+
     public void addTextBlock(String text) {
         content.add(text);
     }

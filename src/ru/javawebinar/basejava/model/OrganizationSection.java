@@ -11,6 +11,10 @@ public class OrganizationSection extends Section {
     public OrganizationSection() {
     }
 
+    public OrganizationSection(List<Organization> content) {
+        this.content = content;
+    }
+
     public void addOrganization(Organization org) {
         content.add(org);
     }

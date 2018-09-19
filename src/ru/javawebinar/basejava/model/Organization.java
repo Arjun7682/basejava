@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
@@ -40,6 +41,20 @@ public class Organization implements Serializable {
 
     public void setCompany(Link company) {
         this.company = company;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Organization that = (Organization) o;
+        return Objects.equals(orgEntries, that.orgEntries) &&
+                Objects.equals(company, that.company);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orgEntries, company);
     }
 
     public void addPosition(LocalDate begin, LocalDate end, String position, String description) {
@@ -90,9 +105,12 @@ public class Organization implements Serializable {
 
         public Position(LocalDate begin, LocalDate end, String title, String description) {
             this.begin = begin;
+            if (end == null) {
+                end = LocalDate.now();
+            }
             this.end = end;
             this.title = title;
-            this.description = description;
+            this.description = description == null ? "" : description;
         }
 
         public LocalDate getBegin() {
@@ -125,6 +143,22 @@ public class Organization implements Serializable {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Position position = (Position) o;
+            return Objects.equals(begin, position.begin) &&
+                    Objects.equals(end, position.end) &&
+                    Objects.equals(title, position.title) &&
+                    Objects.equals(description, position.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(begin, end, title, description);
         }
     }
 
