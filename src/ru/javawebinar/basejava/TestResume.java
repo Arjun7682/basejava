@@ -8,15 +8,15 @@ import java.util.Map;
 public class TestResume {
     public static Resume initTestResume(String uuid) {
         Resume resume = new Resume(uuid, "Григорий Кислин");
-        Map<ContactType, Link> contacts = resume.getContacts();
+        Map<ContactType, String> contacts = resume.getContacts();
 
-        contacts.put(ContactType.PHONE, new Link("+7(921) 855-0482", null));
-        contacts.put(ContactType.SKYPE, new Link("grigory.kislin", "skype:grigory.kislin"));
-        contacts.put(ContactType.EMAIL, new Link("gkislin@yandex.ru", "gkislin@yandex.ru"));
-        contacts.put(ContactType.LINKEDIN, new Link("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin"));
-        contacts.put(ContactType.GITHUB, new Link("Профиль GitHub", "https://github.com/gkislin"));
-        contacts.put(ContactType.STACKOVERFLOW, new Link("Профиль Stackoverflow", "https://stackoverflow.com/users/548473"));
-        contacts.put(ContactType.HOMEPAGE, new Link("Домашняя страница", "http://gkislin.ru/"));
+        contacts.put(ContactType.PHONE, "+7(921) 855-0482");
+        contacts.put(ContactType.SKYPE, "skype:grigory.kislin");
+        contacts.put(ContactType.EMAIL, "gkislin@yandex.ru");
+        contacts.put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        contacts.put(ContactType.GITHUB, "https://github.com/gkislin");
+        contacts.put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
+        contacts.put(ContactType.HOMEPAGE, "http://gkislin.ru/");
 
         Map<SectionType, Section> sections = resume.getSections();
 

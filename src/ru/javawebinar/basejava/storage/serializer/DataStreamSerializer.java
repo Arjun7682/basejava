@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static ru.javawebinar.basejava.util.LambdaExceptionUtil.rethrowConsumer;
+
 public class DataStreamSerializer implements Serializer {
 
     @Override
@@ -16,12 +18,11 @@ public class DataStreamSerializer implements Serializer {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
 
-            Map<ContactType, Link> contacts = resume.getContacts();
+            Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, Link> entry : contacts.entrySet()) {
+            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
                 dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue().getText());
-                dos.writeUTF(entry.getValue().getUrl());
+                dos.writeUTF(entry.getValue());
             }
 
             Map<SectionType, Section> sections = resume.getSections();
@@ -57,9 +58,7 @@ public class DataStreamSerializer implements Serializer {
             int contactsSize = dis.readInt();
             for (int i = 0; i < contactsSize; i++) {
                 ContactType contact = ContactType.valueOf(dis.readUTF());
-                String text = dis.readUTF();
-                String url = dis.readUTF();
-                resume.getContacts().put(contact, new Link(text, url));
+                resume.getContacts().put(contact, dis.readUTF());
             }
 
             int sectionsSize = dis.readInt();
@@ -86,12 +85,9 @@ public class DataStreamSerializer implements Serializer {
     }
 
     private void writeList(DataOutputStream dos, Section section) throws IOException {
-
         List<String> sectionContent = ((ListSection) section).getContent();
         dos.writeInt(sectionContent.size());
-        for (String string : sectionContent) {
-            dos.writeUTF(string);
-        }
+        sectionContent.forEach(rethrowConsumer(dos::writeUTF));
     }
 
     private ListSection readList(DataInputStream dis) throws IOException {
