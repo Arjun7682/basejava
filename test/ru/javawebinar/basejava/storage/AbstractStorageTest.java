@@ -9,7 +9,7 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,10 +78,15 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() throws Exception {
-        List<Resume> resumes = Arrays.asList(R1, R2, R3, R4);
+        List<Resume> resumes = new ArrayList<>();//Arrays.asList(R1, R2, R3, R4);
+        resumes.add(R1);
+        resumes.add(R2);
+        resumes.add(R3);
+        resumes.add(R4);
         Collections.sort(resumes);
         List<Resume> sortedResumes = storage.getAllSorted();
         Assert.assertEquals(resumes, sortedResumes);
+
     }
 
     @Test

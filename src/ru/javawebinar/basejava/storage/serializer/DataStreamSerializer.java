@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ru.javawebinar.basejava.util.LambdaExceptionUtil.rethrowConsumer;
-
 public class DataStreamSerializer implements Serializer {
 
     @Override
@@ -29,22 +27,44 @@ public class DataStreamSerializer implements Serializer {
             dos.writeInt(sections.size());
             for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
                 SectionType sectionType = entry.getKey();
+                Section value = entry.getValue();
                 dos.writeUTF(sectionType.name());
                 switch (sectionType) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        dos.writeUTF(((TextSection) entry.getValue()).getContent());
+                        dos.writeUTF(((TextSection) value).getContent());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        writeList(dos, entry.getValue());
+                        List<String> list = ((ListSection) value).getContent();
+                        dos.writeInt(list.size());
+                        writeList(list, dos::writeUTF);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        writeOrg(dos, entry.getValue());
+                        List<Organization> listOrg = ((OrganizationSection) value).getContent();
+                        dos.writeInt(listOrg.size());
+                        writeList(listOrg, org -> {
+                            dos.writeUTF(org.getCompany().getText());
+                            dos.writeUTF(org.getCompany().getUrl());
+                            List<Organization.Position> positions = org.getOrgEntries();
+                            dos.writeInt(positions.size());
+                            writeList(positions, pos -> {
+                                writeLocalDate(dos, pos.getBegin());
+                                writeLocalDate(dos, pos.getEnd());
+                                dos.writeUTF(pos.getTitle());
+                                dos.writeUTF(pos.getDescription());
+                            });
+                        });
                         break;
                 }
             }
+        }
+    }
+
+    private <T> void writeList(List<T> list, MyConsumer<T> consumer) throws IOException {
+        for (T t : list) {
+            consumer.accept(t);
         }
     }
 
@@ -79,16 +99,10 @@ public class DataStreamSerializer implements Serializer {
                         break;
                 }
             }
-
             return resume;
         }
     }
 
-    private void writeList(DataOutputStream dos, Section section) throws IOException {
-        List<String> sectionContent = ((ListSection) section).getContent();
-        dos.writeInt(sectionContent.size());
-        sectionContent.forEach(rethrowConsumer(dos::writeUTF));
-    }
 
     private ListSection readList(DataInputStream dis) throws IOException {
         List<String> sectionContent = new ArrayList<>();
@@ -98,23 +112,6 @@ public class DataStreamSerializer implements Serializer {
             sectionContent.add(e);
         }
         return new ListSection(sectionContent);
-    }
-
-    private void writeOrg(DataOutputStream dos, Section section) throws IOException {
-        List<Organization> organizations = ((OrganizationSection) section).getContent();
-        dos.writeInt(organizations.size());
-        for (Organization organization : organizations) {
-            dos.writeUTF(organization.getCompany().getText());
-            dos.writeUTF(organization.getCompany().getUrl());
-            List<Organization.Position> positions = organization.getOrgEntries();
-            dos.writeInt(positions.size());
-            for (Organization.Position position : positions) {
-                writeLocalDate(dos, position.getBegin());
-                writeLocalDate(dos, position.getEnd());
-                dos.writeUTF(position.getTitle());
-                dos.writeUTF(position.getDescription());
-            }
-        }
     }
 
     private OrganizationSection readOrg(DataInputStream dis) throws IOException {
@@ -135,6 +132,11 @@ public class DataStreamSerializer implements Serializer {
             }
         }
         return new OrganizationSection(organizations);
+    }
+
+    @FunctionalInterface
+    private interface MyConsumer<T> {
+        void accept(T t) throws IOException;
     }
 
     private void writeLocalDate(DataOutputStream dos, LocalDate localDate) throws IOException {
