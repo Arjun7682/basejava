@@ -59,8 +59,8 @@ public class DataStreamSerializer implements Serializer {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            readItems(dis, () -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
-            readItems(dis, () -> {
+            readContent(dis, () -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readContent(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
                 resume.setSections(sectionType, readSection(dis, sectionType));
             });
@@ -86,18 +86,18 @@ public class DataStreamSerializer implements Serializer {
                                 ))
                         )));
             default:
-                throw new IllegalStateException();
+                return null;
         }
     }
 
-    private <T> void writeCollection(DataOutputStream dos, Collection<T> collection, ElementWriter<T> writer) throws IOException {
+    private <T> void writeCollection(DataOutputStream dos, Collection<T> collection, CollectionWriter<T> writer) throws IOException {
         dos.writeInt(collection.size());
         for (T item : collection) {
             writer.write(item);
         }
     }
 
-    private <T> List<T> readList(DataInputStream dis, ElementReader<T> reader) throws IOException {
+    private <T> List<T> readList(DataInputStream dis, CollectionReader<T> reader) throws IOException {
         int size = dis.readInt();
         List<T> sectionContent = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -105,10 +105,10 @@ public class DataStreamSerializer implements Serializer {
         }
         return sectionContent;
     }
-    private void readItems(DataInputStream dis, ElementProcessor processor) throws IOException {
+    private void readContent(DataInputStream dis, ContentReader reader) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            processor.process();
+            reader.read();
         }
     }
 
@@ -122,17 +122,17 @@ public class DataStreamSerializer implements Serializer {
     }
 
     @FunctionalInterface
-    private interface ElementWriter<T> {
+    private interface CollectionWriter<T> {
         void write(T t) throws IOException;
     }
 
     @FunctionalInterface
-    private interface ElementReader<T> {
+    private interface CollectionReader<T> {
         T read() throws IOException;
     }
 
     @FunctionalInterface
-    private interface ElementProcessor {
-        void process() throws IOException;
+    private interface ContentReader {
+        void read() throws IOException;
     }
 }
