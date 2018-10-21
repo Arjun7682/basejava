@@ -5,8 +5,9 @@ import ru.javawebinar.basejava.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
 
 public class DataStreamSerializer implements Serializer {
 
@@ -16,16 +17,12 @@ public class DataStreamSerializer implements Serializer {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
 
-            Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            writeCollection(dos, resume.getContacts().entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            });
 
-            Map<SectionType, Section> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
+            writeCollection(dos, resume.getSections().entrySet(), entry -> {
                 SectionType sectionType = entry.getKey();
                 Section value = entry.getValue();
                 dos.writeUTF(sectionType.name());
@@ -36,20 +33,14 @@ public class DataStreamSerializer implements Serializer {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        List<String> list = ((ListSection) value).getContent();
-                        dos.writeInt(list.size());
-                        writeList(list, dos::writeUTF);
+                        writeCollection(dos, ((ListSection) value).getContent(), dos::writeUTF);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        List<Organization> listOrg = ((OrganizationSection) value).getContent();
-                        dos.writeInt(listOrg.size());
-                        writeList(listOrg, org -> {
+                        writeCollection(dos, ((OrganizationSection) value).getContent(), org -> {
                             dos.writeUTF(org.getCompany().getText());
                             dos.writeUTF(org.getCompany().getUrl());
-                            List<Organization.Position> positions = org.getOrgEntries();
-                            dos.writeInt(positions.size());
-                            writeList(positions, pos -> {
+                            writeCollection(dos, org.getOrgEntries(), pos -> {
                                 writeLocalDate(dos, pos.getBegin());
                                 writeLocalDate(dos, pos.getEnd());
                                 dos.writeUTF(pos.getTitle());
@@ -58,13 +49,7 @@ public class DataStreamSerializer implements Serializer {
                         });
                         break;
                 }
-            }
-        }
-    }
-
-    private <T> void writeList(List<T> list, MyConsumer<T> consumer) throws IOException {
-        for (T t : list) {
-            consumer.accept(t);
+            });
         }
     }
 
@@ -74,69 +59,57 @@ public class DataStreamSerializer implements Serializer {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-
-            int contactsSize = dis.readInt();
-            for (int i = 0; i < contactsSize; i++) {
-                ContactType contact = ContactType.valueOf(dis.readUTF());
-                resume.getContacts().put(contact, dis.readUTF());
-            }
-
-            int sectionsSize = dis.readInt();
-            for (int i = 0; i < sectionsSize; i++) {
+            readItems(dis, () -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readItems(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                switch (sectionType) {
-                    case OBJECTIVE:
-                    case PERSONAL:
-                        resume.getSections().put(sectionType, new TextSection(dis.readUTF()));
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        resume.getSections().put(sectionType, readList(dis));
-                        break;
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        resume.getSections().put(sectionType, readOrg(dis));
-                        break;
-                }
-            }
+                resume.setSections(sectionType, readSection(dis, sectionType));
+            });
             return resume;
         }
     }
 
-
-    private ListSection readList(DataInputStream dis) throws IOException {
-        List<String> sectionContent = new ArrayList<>();
-        int i1 = dis.readInt();
-        for (int i = 0; i < i1; i++) {
-            String e = dis.readUTF();
-            sectionContent.add(e);
+    private Section readSection(DataInputStream dis, SectionType sectionType) throws IOException {
+        switch (sectionType) {
+            case OBJECTIVE:
+            case PERSONAL:
+                return new TextSection(dis.readUTF());
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                return new ListSection(readList(dis, dis::readUTF));
+            case EXPERIENCE:
+            case EDUCATION:
+                return new OrganizationSection(
+                        readList(dis, () -> new Organization(
+                                new Link(dis.readUTF(), dis.readUTF()),
+                                readList(dis, () -> new Organization.Position(
+                                        readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()
+                                ))
+                        )));
+            default:
+                throw new IllegalStateException();
         }
-        return new ListSection(sectionContent);
     }
 
-    private OrganizationSection readOrg(DataInputStream dis) throws IOException {
-        List<Organization> organizations = new ArrayList<>();
-        int orgSize = dis.readInt();
-        for (int i = 0; i < orgSize; i++) {
-            Organization organization = new Organization();
-            organization.setCompany(new Link(dis.readUTF(), dis.readUTF()));
-            organization.setOrgEntries(new ArrayList<>());
-            int positionSize = dis.readInt();
-            for (int j = 0; j < positionSize; j++) {
-                Organization.Position position = new Organization.Position();
-                position.setBegin(readLocalDate(dis));
-                position.setEnd(readLocalDate(dis));
-                position.setTitle(dis.readUTF());
-                position.setDescription(dis.readUTF());
-                organization.getOrgEntries().add(position);
-            }
+    private <T> void writeCollection(DataOutputStream dos, Collection<T> collection, ElementWriter<T> writer) throws IOException {
+        dos.writeInt(collection.size());
+        for (T item : collection) {
+            writer.write(item);
         }
-        return new OrganizationSection(organizations);
     }
 
-    @FunctionalInterface
-    private interface MyConsumer<T> {
-        void accept(T t) throws IOException;
+    private <T> List<T> readList(DataInputStream dis, ElementReader<T> reader) throws IOException {
+        int size = dis.readInt();
+        List<T> sectionContent = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            sectionContent.add(reader.read());
+        }
+        return sectionContent;
+    }
+    private void readItems(DataInputStream dis, ElementProcessor processor) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            processor.process();
+        }
     }
 
     private void writeLocalDate(DataOutputStream dos, LocalDate localDate) throws IOException {
@@ -146,5 +119,20 @@ public class DataStreamSerializer implements Serializer {
 
     private LocalDate readLocalDate(DataInputStream dis) throws IOException {
         return LocalDate.of(dis.readInt(), dis.readInt(), 1);
+    }
+
+    @FunctionalInterface
+    private interface ElementWriter<T> {
+        void write(T t) throws IOException;
+    }
+
+    @FunctionalInterface
+    private interface ElementReader<T> {
+        T read() throws IOException;
+    }
+
+    @FunctionalInterface
+    private interface ElementProcessor {
+        void process() throws IOException;
     }
 }
