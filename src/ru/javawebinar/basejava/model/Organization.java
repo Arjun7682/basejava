@@ -109,10 +109,12 @@ public class Organization implements Serializable {
         }
 
         public Position(LocalDate begin, LocalDate end, String title, String description) {
+            begin = begin.withDayOfMonth(1);
             this.begin = begin;
             if (end == null) {
                 end = LocalDate.now();
             }
+            end = end.withDayOfMonth(1);
             this.end = end;
             this.title = title;
             this.description = description == null ? "" : description;
@@ -166,6 +168,4 @@ public class Organization implements Serializable {
             return Objects.hash(begin, end, title, description);
         }
     }
-
-
 }
