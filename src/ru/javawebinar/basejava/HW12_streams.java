@@ -1,10 +1,9 @@
 package ru.javawebinar.basejava;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class HW12_streams {
     public static void main(String[] args) {
@@ -16,21 +15,19 @@ public class HW12_streams {
     }
 
     private static int minValue(int[] values) {
-        List<Integer> integers = Arrays.stream(values)
+        return Arrays.stream(values)
                 .distinct()
-                .boxed()
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-        return IntStream.range(0, integers.size())
-                .map(i -> ((int) Math.pow(10, i)) * integers.get(i))
-                .sum();
+                .sorted()
+                .reduce(0, (acc, x) -> acc * 10 + x);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
+        AtomicInteger sum = new AtomicInteger();
         return integers.stream()
-                .filter(integer -> (integers.stream()
-                        .mapToInt(a -> a)
-                        .sum() % 2 == 0) == (integer % 2 != 0))
+                .peek(sum::addAndGet)
+                .sorted()
+                .filter(i -> (sum.get() % 2 == 0) == (i % 2 != 0))
                 .collect(Collectors.toList());
+
     }
 }
