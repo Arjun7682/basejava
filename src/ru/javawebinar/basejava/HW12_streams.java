@@ -25,9 +25,7 @@ public class HW12_streams {
         AtomicInteger sum = new AtomicInteger();
         return integers.stream()
                 .peek(sum::addAndGet)
-                .sorted()
-                .filter(i -> (sum.get() % 2 == 0) == (i % 2 != 0))
-                .collect(Collectors.toList());
-
+                .collect(Collectors.partitioningBy(integer -> integer % 2 == 0))
+                .get(sum.get() % 2 != 0);
     }
 }
