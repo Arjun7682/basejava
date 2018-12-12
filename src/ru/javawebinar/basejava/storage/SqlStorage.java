@@ -1,8 +1,8 @@
 package ru.javawebinar.basejava.storage;
 
-import com.sun.javaws.exceptions.ExitException;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.sql.SqlHelper;
 
@@ -26,15 +26,14 @@ public class SqlStorage implements Storage {
     @Override
     public void save(Resume resume) {
         try {
-            get(resume.getUuid());
-            throw new ExistStorageException(resume.getUuid());
-        } catch (NotExistStorageException e) {
             sqlHelper.queryExec("insert into resume (uuid, full_name) VALUES (?, ?)", ps -> {
                 ps.setString(1, resume.getUuid());
                 ps.setString(2, resume.getFullName());
                 ps.executeUpdate();
                 return null;
             });
+        } catch (StorageException e) {
+            throw new ExistStorageException(resume.getUuid());
         }
     }
 
@@ -55,7 +54,9 @@ public class SqlStorage implements Storage {
         sqlHelper.queryExec("update resume set full_name = ? where uuid = ?", ps -> {
             ps.setString(1, resume.getFullName());
             ps.setString(2, resume.getUuid());
-            ps.executeUpdate();
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(resume.getUuid());
+            }
             return null;
         });
     }
@@ -64,14 +65,16 @@ public class SqlStorage implements Storage {
     public void delete(String uuid) {
         sqlHelper.queryExec("delete from resume r where r.uuid = ?", ps -> {
             ps.setString(1, uuid);
-            ps.executeUpdate();
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(uuid);
+            }
             return null;
         });
     }
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.queryExec("select * from resume order by uuid", ps -> {
+        return sqlHelper.queryExec("select * from resume order by full_name, uuid", ps -> {
             ResultSet rs = ps.executeQuery();
             List<Resume> resumes = new ArrayList<>();
             while (rs.next()) {
