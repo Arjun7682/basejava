@@ -6,6 +6,7 @@ import org.junit.Test;
 import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.io.File;
@@ -26,6 +27,15 @@ public abstract class AbstractStorageTest {
     public static final Resume R3 = new Resume(UUID_3, "name3");
 
     //public static final Resume R4 = TestResume.initTestResume("uuid4");
+
+    static {
+        R1.setContacts(ContactType.SKYPE, "12345");
+        R1.setContacts(ContactType.PHONE, "67890");
+        R2.setContacts(ContactType.SKYPE, "12345");
+        R2.setContacts(ContactType.PHONE, "67890");
+        R3.setContacts(ContactType.SKYPE, "12345");
+        R3.setContacts(ContactType.PHONE, "67890");
+    }
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -54,6 +64,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void save() throws Exception {
         final Resume newResume = new Resume("uuid5", "name");
+        newResume.setContacts(ContactType.SKYPE, "12345");
+        newResume.setContacts(ContactType.PHONE, "67890");
         final int sizeBeforeSave = storage.size();
         storage.save(newResume);
         Assert.assertEquals(storage.get("uuid5"), newResume);
@@ -80,12 +92,14 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
         Assert.assertEquals(3, list.size());
-        Assert.assertEquals(list, Arrays.asList(R1, R2, R3));
+        Assert.assertEquals(Arrays.asList(R1, R2, R3), list);
     }
 
     @Test
     public void update() throws Exception {
         Resume resume = new Resume(UUID_3, "update");
+        resume.setContacts(ContactType.SKYPE, "12345");
+        resume.setContacts(ContactType.PHONE, "67890");
         storage.update(resume);
         Assert.assertEquals(resume, storage.get(UUID_3));
 
