@@ -3,6 +3,7 @@ package ru.javawebinar.basejava.storage;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.sql.ExceptionUtil;
 import ru.javawebinar.basejava.sql.SqlHelper;
 
 import java.sql.Connection;
@@ -10,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Function;
 
 public class SqlStorage implements Storage {
     private SqlHelper sqlHelper;
@@ -21,7 +23,6 @@ public class SqlStorage implements Storage {
     @Override
     public void clear() {
         sqlHelper.execute("DELETE from resume", PreparedStatement::execute);
-        sqlHelper.execute("DELETE from contact", PreparedStatement::execute);
     }
 
     @Override
@@ -51,9 +52,7 @@ public class SqlStorage implements Storage {
             }
             Resume resume = new Resume(uuid, rs.getString("full_name"));
             do {
-                String value = rs.getString("value");
-                ContactType type = ContactType.valueOf(rs.getString("type"));
-                resume.setContacts(type, value);
+                addContacts(rs, resume);
             } while (rs.next());
             return resume;
         });
@@ -84,7 +83,6 @@ public class SqlStorage implements Storage {
                     throw new NotExistStorageException(uuid);
                 }
             }
-            deleteContacts(uuid, conn);
             return null;
         });
     }
@@ -100,12 +98,9 @@ public class SqlStorage implements Storage {
             Map<String, Resume> resumes = new LinkedHashMap<>();
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
-                Resume resume = resumes.get(uuid);
-                if (resume == null) {
-                    resume = new Resume(uuid, rs.getString("full_name"));
-                    resumes.put(uuid, resume);
-                }
-                resume.setContacts(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
+                String name = rs.getString("full_name");
+                resumes.computeIfAbsent(uuid, s -> new Resume(uuid, name));
+                addContacts(rs, resumes.get(uuid));
             }
             return new ArrayList<>(resumes.values());
         });
@@ -117,6 +112,13 @@ public class SqlStorage implements Storage {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getInt(1) : 0;
         });
+    }
+
+    private void addContacts(ResultSet rs, Resume resume) throws SQLException {
+        String value = rs.getString("value");
+        if (value != null) {
+            resume.setContacts(ContactType.valueOf(rs.getString("type")), value);
+        }
     }
 
     private void insertContacts(Resume resume, Connection conn) throws SQLException {
