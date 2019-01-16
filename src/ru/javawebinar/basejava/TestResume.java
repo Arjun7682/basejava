@@ -36,7 +36,7 @@ public class TestResume {
         qualifications.addTextBlock("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
-        OrganizationSection work = new OrganizationSection();
+        /*OrganizationSection work = new OrganizationSection();
         work.addOrganization(new Organization(
                 new Link("Wrike", "https://www.wrike.com/"),
                 new Organization.Position(LocalDate.now(), null,
@@ -64,7 +64,7 @@ public class TestResume {
                 new Organization.Position(LocalDate.now(), LocalDate.now(),
                         "Аспирантура (программист С, С++)",
                         null)));
-        sections.put(SectionType.EDUCATION, edu);
+        sections.put(SectionType.EDUCATION, edu);*/
 
         return resume;
     }

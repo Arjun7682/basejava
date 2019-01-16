@@ -6,12 +6,12 @@ import org.junit.Test;
 import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.model.ContactType;
-import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.*;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
@@ -26,7 +26,7 @@ public abstract class AbstractStorageTest {
     private static final String UUID_3 = "uuid3";
     public static final Resume R3 = new Resume(UUID_3, "name3");
 
-    //public static final Resume R4 = TestResume.initTestResume("uuid4");
+    public static final Resume R4 = new Resume("uuid4", "Григорий Кислин");
 
     static {
         R1.setContacts(ContactType.SKYPE, "12345");
@@ -35,6 +35,34 @@ public abstract class AbstractStorageTest {
         R2.setContacts(ContactType.PHONE, "67890");
         R3.setContacts(ContactType.SKYPE, "12345");
         R3.setContacts(ContactType.PHONE, "67890");
+
+        Map<ContactType, String> contacts = R4.getContacts();
+
+        contacts.put(ContactType.PHONE, "+7(921) 855-0482");
+        contacts.put(ContactType.SKYPE, "skype:grigory.kislin");
+        contacts.put(ContactType.EMAIL, "gkislin@yandex.ru");
+        contacts.put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        contacts.put(ContactType.GITHUB, "https://github.com/gkislin");
+        contacts.put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
+        contacts.put(ContactType.HOMEPAGE, "http://gkislin.ru/");
+
+        Map<SectionType, Section> sections = R4.getSections();
+
+        TextSection objective = new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        sections.put(SectionType.OBJECTIVE, objective);
+
+        TextSection personal = new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        sections.put(SectionType.PERSONAL, personal);
+
+        ListSection achievement = new ListSection();
+        achievement.addTextBlock("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", ");
+        achievement.addTextBlock("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. ");
+        sections.put(SectionType.ACHIEVEMENT, achievement);
+
+        ListSection qualifications = new ListSection();
+        qualifications.addTextBlock("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
+        qualifications.addTextBlock("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
+        sections.put(SectionType.QUALIFICATIONS, qualifications);
     }
 
     public AbstractStorageTest(Storage storage) {
@@ -47,12 +75,12 @@ public abstract class AbstractStorageTest {
         storage.save(R1);
         storage.save(R2);
         storage.save(R3);
-        //storage.save(R4);
+        storage.save(R4);
     }
 
     @Test
     public void size() throws Exception {
-        Assert.assertEquals(3, storage.size());
+        Assert.assertEquals(4, storage.size());
     }
 
     @Test
@@ -79,7 +107,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void get() throws Exception {
-        Assert.assertEquals(storage.get("uuid3"), R3);
+        Assert.assertEquals(storage.get("uuid4"), R4);
 
     }
 
@@ -91,8 +119,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
-        Assert.assertEquals(3, list.size());
-        Assert.assertEquals(Arrays.asList(R1, R2, R3), list);
+        Assert.assertEquals(4, list.size());
+        Assert.assertEquals(Arrays.asList(R1, R2, R3, R4), list);
     }
 
     @Test
