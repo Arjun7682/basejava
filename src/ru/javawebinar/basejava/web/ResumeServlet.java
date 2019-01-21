@@ -1,6 +1,7 @@
 package ru.javawebinar.basejava.web;
 
 import ru.javawebinar.basejava.Config;
+import ru.javawebinar.basejava.TestResume;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.storage.Storage;
 
@@ -15,13 +16,14 @@ import java.util.Map;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage = Config.get().getStorage();
-    private PrintWriter writer;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        storage.clear();
+        storage.save(TestResume.initTestResume("test"));
         if (storage.size() == 0) {
             return;
         }
@@ -30,8 +32,8 @@ public class ResumeServlet extends HttpServlet {
 //        response.setHeader("Content-Type", "text/html; charset=UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
+        PrintWriter writer = response.getWriter();
         String uuid = request.getParameter("uuid");
-        writer = response.getWriter();
         writer.write("" +
                 "<html>\n" +
                 "<head>\n" +
@@ -42,7 +44,7 @@ public class ResumeServlet extends HttpServlet {
         if (uuid == null) {
             writer.write("<b>Список всех резюме:</b>");
             for (Resume resume : storage.getAllSorted()) {
-                writeResume(resume);
+                writeResume(writer, resume);
             }
         } else {
             Resume resume = storage.get(uuid);
@@ -50,7 +52,7 @@ public class ResumeServlet extends HttpServlet {
                 writer.write("Резюме " + uuid + " отсутствует в базе");
             } else {
                 writer.write("Резюме " + uuid + ':');
-                writeResume(resume);
+                writeResume(writer, resume);
             }
         }
 
@@ -59,11 +61,11 @@ public class ResumeServlet extends HttpServlet {
                 "</html>");
     }
 
-    private void writeResume(Resume resume) {
+    private void writeResume(PrintWriter writer, Resume resume) {
         writer.write("<table border=\"1\">");
-        writeCell("Имя", resume.getFullName());
+        writeCell(writer, "Имя", resume.getFullName());
         for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-            writeCell(entry.getKey().name(), entry.getValue());
+            writeCell(writer, entry.getKey().name(), entry.getValue());
         }
         for (Map.Entry<SectionType, Section> entry : resume.getSections().entrySet()) {
             SectionType sectionType = entry.getKey();
@@ -71,7 +73,7 @@ public class ResumeServlet extends HttpServlet {
             switch (sectionType) {
                 case OBJECTIVE:
                 case PERSONAL:
-                    writeCell(sectionType.getTitle(), ((TextSection) section).getContent());
+                    writeCell(writer, sectionType.getTitle(), ((TextSection) section).getContent());
                     break;
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
@@ -90,7 +92,7 @@ public class ResumeServlet extends HttpServlet {
         writer.write("</table><br>");
     }
 
-    private void writeCell(String value1, String value2) {
+    private void writeCell(PrintWriter writer, String value1, String value2) {
         writer.write("" +
                 "<tr>\n" +
                 "   <td>" + value1 + "</td>\n" +

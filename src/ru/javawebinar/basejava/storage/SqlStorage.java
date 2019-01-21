@@ -111,12 +111,10 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.transactionalExecute(conn -> {
-            try (PreparedStatement ps = conn.prepareStatement("DELETE FROM resume r WHERE r.uuid = ?")) {
-                ps.setString(1, uuid);
-                if (ps.executeUpdate() == 0) {
-                    throw new NotExistStorageException(uuid);
-                }
+        sqlHelper.execute("DELETE FROM resume r WHERE r.uuid = ?", ps -> {
+            ps.setString(1, uuid);
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(uuid);
             }
             return null;
         });
@@ -227,12 +225,7 @@ public class SqlStorage implements Storage {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        StringBuilder sb = new StringBuilder("");
-                        List<String> listSection = ((ListSection) entry.getValue()).getContent();
-                        for (String s : listSection) {
-                            sb.append(s).append("\n");
-                        }
-                        value = sb.toString();
+                        value = String.join("\n", ((ListSection) entry.getValue()).getContent());
                         break;
                 }
                 ps.setString(2, sectionType.name());
