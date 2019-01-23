@@ -45,24 +45,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        /*return sqlHelper.execute("" +
-                "    SELECT * FROM resume r " +
-                " LEFT JOIN contact c " +
-                "        ON r.uuid = c.resume_uuid" +
-                "     WHERE r.uuid = ?", ps -> {
-            ps.setString(1, uuid);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                throw new NotExistStorageException(uuid);
-            }
-            Resume resume = new Resume(uuid, rs.getString("full_name"));
-            do {
-                addContacts(rs, resume);
-            } while (rs.next());
-            return resume;
-        });*/
-
-        return sqlHelper.transactionalExecute(conn -> {
+            return sqlHelper.transactionalExecute(conn -> {
             Resume resume;
             try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume WHERE uuid = ?")) {
                 ps.setString(1, uuid);
@@ -122,22 +105,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        /*return sqlHelper.execute("" +
-                "   SELECT * FROM resume r\n" +
-                "LEFT JOIN contact c" +
-                "       ON r.uuid = c.resume_uuid" +
-                " ORDER BY full_name, uuid", ps -> {
-            ResultSet rs = ps.executeQuery();
-            Map<String, Resume> resumes = new LinkedHashMap<>();
-            while (rs.next()) {
-                String uuid = rs.getString("uuid");
-                String name = rs.getString("full_name");
-                addContacts(rs, resumes.computeIfAbsent(uuid, s -> new Resume(uuid, name)));
-            }
-            return new ArrayList<>(resumes.values());
-        });*/
-
-        return sqlHelper.transactionalExecute(conn -> {
+           return sqlHelper.transactionalExecute(conn -> {
             Map<String, Resume> resumes = new LinkedHashMap<>();
             try (PreparedStatement ps = conn.prepareStatement("" +
                     "   SELECT * FROM resume r\n" +
