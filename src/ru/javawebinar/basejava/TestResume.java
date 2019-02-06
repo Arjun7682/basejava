@@ -12,7 +12,7 @@ public class TestResume {
 
         contacts.put(ContactType.PHONE, "+7(921) 855-0482");
         contacts.put(ContactType.SKYPE, "skype:grigory.kislin");
-        contacts.put(ContactType.EMAIL, "gkislin@yandex.ru");
+        contacts.put(ContactType.MAIL, "gkislin@yandex.ru");
         contacts.put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
         contacts.put(ContactType.GITHUB, "https://github.com/gkislin");
         contacts.put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
@@ -36,7 +36,7 @@ public class TestResume {
         qualifications.addTextBlock("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
-        /*OrganizationSection work = new OrganizationSection();
+        OrganizationSection work = new OrganizationSection();
         work.addOrganization(new Organization(
                 new Link("Wrike", "https://www.wrike.com/"),
                 new Organization.Position(LocalDate.now(), null,
@@ -64,7 +64,7 @@ public class TestResume {
                 new Organization.Position(LocalDate.now(), LocalDate.now(),
                         "Аспирантура (программист С, С++)",
                         null)));
-        sections.put(SectionType.EDUCATION, edu);*/
+        sections.put(SectionType.EDUCATION, edu);
 
         return resume;
     }

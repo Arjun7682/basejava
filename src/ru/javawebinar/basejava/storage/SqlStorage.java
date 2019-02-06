@@ -4,6 +4,7 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.sql.SqlHelper;
+import ru.javawebinar.basejava.util.JsonParser;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,7 +46,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-            return sqlHelper.transactionalExecute(conn -> {
+        return sqlHelper.transactionalExecute(conn -> {
             Resume resume;
             try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume WHERE uuid = ?")) {
                 ps.setString(1, uuid);
@@ -105,7 +106,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-           return sqlHelper.transactionalExecute(conn -> {
+        return sqlHelper.transactionalExecute(conn -> {
             Map<String, Resume> resumes = new LinkedHashMap<>();
             try (PreparedStatement ps = conn.prepareStatement("" +
                     "   SELECT * FROM resume r\n" +
@@ -152,19 +153,10 @@ public class SqlStorage implements Storage {
     }
 
     private void addSections(ResultSet rs, Resume resume) throws SQLException {
-        String value = rs.getString("value");
-        if (value != null) {
-            SectionType sectionType = SectionType.valueOf(rs.getString("type"));
-            switch (sectionType) {
-                case OBJECTIVE:
-                case PERSONAL:
-                    resume.setSections(sectionType, new TextSection(value));
-                    break;
-                case ACHIEVEMENT:
-                case QUALIFICATIONS:
-                    resume.setSections(sectionType, new ListSection(Arrays.asList(value.split("\n"))));
-                    break;
-            }
+        String content = rs.getString("value");
+        if (content != null) {
+            SectionType type = SectionType.valueOf(rs.getString("type"));
+            resume.setSections(type, JsonParser.read(content, Section.class));
         }
     }
 
@@ -184,20 +176,9 @@ public class SqlStorage implements Storage {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO section (resume_uuid, type, value) VALUES (?, ?, ?) ")) {
             for (Map.Entry<SectionType, Section> entry : resume.getSections().entrySet()) {
                 ps.setString(1, resume.getUuid());
-                SectionType sectionType = entry.getKey();
-                String value = "";
-                switch (sectionType) {
-                    case OBJECTIVE:
-                    case PERSONAL:
-                        value = ((TextSection) entry.getValue()).getContent();
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        value = String.join("\n", ((ListSection) entry.getValue()).getContent());
-                        break;
-                }
-                ps.setString(2, sectionType.name());
-                ps.setString(3, value);
+                SectionType type = entry.getKey();
+                ps.setString(2, type.name());
+                ps.setString(3, JsonParser.write(entry.getValue(), Section.class));
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -205,14 +186,15 @@ public class SqlStorage implements Storage {
     }
 
     private void deleteContacts(String uuid, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM contact c WHERE c.resume_uuid = ?")) {
-            ps.setString(1, uuid);
-            ps.executeUpdate();
-        }
+        deleteAttributes(uuid, conn, "DELETE FROM contact c WHERE c.resume_uuid = ?");
     }
 
     private void deleteSections(String uuid, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM section s WHERE s.resume_uuid = ?")) {
+        deleteAttributes(uuid, conn, "DELETE FROM section s WHERE s.resume_uuid = ?");
+    }
+
+    private void deleteAttributes(String uuid, Connection conn, String sql) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, uuid);
             ps.executeUpdate();
         }
