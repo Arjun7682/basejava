@@ -39,7 +39,7 @@ public class TestResume {
         OrganizationSection work = new OrganizationSection();
         work.addOrganization(new Organization(
                 new Link("Wrike", "https://www.wrike.com/"),
-                new Organization.Position(LocalDate.now(), null,
+                new Organization.Position(LocalDate.now(),
                         "Старший разработчик (backend)",
                         "Проектирование и разработка онлайн платформы управления проектами Wrike")));
         work.addOrganization(new Organization(
@@ -53,7 +53,7 @@ public class TestResume {
 
         edu.addOrganization(new Organization(
                 new Link("Coursera", "https://www.coursera.org/course/progfun"),
-                new Organization.Position(LocalDate.now(), null,
+                new Organization.Position(LocalDate.now(),
                         "Functional Programming Principles in Scala\" by Martin Odersky",
                         null)));
         edu.addOrganization(new Organization(

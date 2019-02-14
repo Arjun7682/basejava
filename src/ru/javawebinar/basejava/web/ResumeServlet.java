@@ -1,15 +1,21 @@
 package ru.javawebinar.basejava.web;
 
 import ru.javawebinar.basejava.Config;
+import ru.javawebinar.basejava.EmptyResume;
+import ru.javawebinar.basejava.TestResume;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.storage.Storage;
+import ru.javawebinar.basejava.util.DateUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage = Config.get().getStorage();
@@ -18,8 +24,15 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
-        r.setFullName(fullName);
+        Resume r;
+
+        if (uuid == null || uuid.trim().length() == 0) {
+            r = new Resume(fullName);
+        } else {
+            r = storage.get(uuid);
+            r.setFullName(fullName);
+        }
+
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && value.trim().length() != 0) {
@@ -28,6 +41,7 @@ public class ResumeServlet extends HttpServlet {
                 r.getContacts().remove(type);
             }
         }
+
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && value.trim().length() != 0) {
@@ -39,21 +53,43 @@ public class ResumeServlet extends HttpServlet {
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
                         r.setSections(type, new ListSection(Arrays.asList(value.split("\n"))));
+                        break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        String[] companies = request.getParameterValues(type.name());
+                        String[] urls = request.getParameterValues(type.name());
+                        List<Organization> organizations = new ArrayList<>();
+                        for (int i = 0; i < companies.length; i++) {
+                            Link link = new Link(companies[i], urls[i]);
+                            String[] startDates = request.getParameterValues(type.name() + i + "startDate");
+                            String[] endDates = request.getParameterValues(type.name() + i + "endDate");
+                            String[] titles = request.getParameterValues(type.name() + i + "title");
+                            String[] descriptions = request.getParameterValues(type.name() + i + "description");
+                            List<Organization.Position> positions = new ArrayList<>();
+                            for (int j = 0; j < titles.length; j++) {
+                                LocalDate startDate = DateUtil.parse(startDates[j]);
+                                LocalDate endDate = DateUtil.parse(endDates[j]);
+                                positions.add(new Organization.Position(startDate, endDate, titles[j], descriptions[j]));
+                            }
+                            organizations.add(new Organization(link, positions));
+                        }
+                        r.setSections(type, new OrganizationSection(organizations));
                 }
-
             } else {
                 r.getContacts().remove(type);
             }
         }
-        storage.update(r);
+        if (uuid == null || uuid.trim().length() == 0) {
+            storage.save(r);
+        } else {
+            storage.update(r);
+        }
         response.sendRedirect("resume");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //storage.clear();
-        //storage.save(TestResume.initTestResume("test"));
         if (storage.size() == 0) {
-            return;
+            storage.save(TestResume.initTestResume("test"));
         }
 
         String uuid = request.getParameter("uuid");
@@ -74,6 +110,9 @@ public class ResumeServlet extends HttpServlet {
             case "view":
             case "edit":
                 r = storage.get(uuid);
+                break;
+            case "add":
+                r = EmptyResume.initEmptyResume();
                 break;
             default:
                 throw new IllegalStateException("action " + action + " is illegal");

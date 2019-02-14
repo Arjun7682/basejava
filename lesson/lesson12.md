@@ -29,7 +29,7 @@
 ## Разбор домашнего задания 10го урока
 
 ## Домашнее задание:
-- <a href="http://java-course.ru/begin/postgresql">Установить PostgreSQL</a>
+- <a href="http://java-course.ru/startDate/postgresql">Установить PostgreSQL</a>
 - Посомтреть на реляционные базы данных и SQL:
   - <a href="http://www.codenet.ru/progr/vbasic/vb_db/1.php">Введение в базы данных</a>
   - <a href="http://www.intuit.ru/studies/courses/5/5/info">Основы SQL</a>

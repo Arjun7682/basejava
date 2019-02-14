@@ -41,8 +41,8 @@ public class DataStreamSerializer implements Serializer {
                             dos.writeUTF(org.getCompany().getText());
                             dos.writeUTF(org.getCompany().getUrl());
                             writeCollection(dos, org.getOrgEntries(), pos -> {
-                                writeLocalDate(dos, pos.getBegin());
-                                writeLocalDate(dos, pos.getEnd());
+                                writeLocalDate(dos, pos.getStartDate());
+                                writeLocalDate(dos, pos.getEndDate());
                                 dos.writeUTF(pos.getTitle());
                                 dos.writeUTF(pos.getDescription());
                             });

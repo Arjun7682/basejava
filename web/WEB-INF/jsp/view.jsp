@@ -1,6 +1,7 @@
 <%@ page import="ru.javawebinar.basejava.model.ListSection" %>
 <%@ page import="ru.javawebinar.basejava.model.OrganizationSection" %>
 <%@ page import="ru.javawebinar.basejava.model.TextSection" %>
+<%@ page import="ru.javawebinar.basejava.util.DateUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -47,8 +48,8 @@
                     <c:forEach var="position" items="${orgEntry.orgEntries}">
                         <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
                         <tr>
-                            <td rowspan="2" width="15%" style="vertical-align: top">
-                                    ${position.begin.toString()} - ${position.end.toString()}
+                            <td rowspan="2" width="20%" style="vertical-align: top">
+                                    ${DateUtil.format(position.startDate)} - ${DateUtil.format(position.endDate)}
                             </td>
                             <td>
                                 <b>${position.title}</b>

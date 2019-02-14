@@ -7,10 +7,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static ru.javawebinar.basejava.util.DateUtil.NOW;
+import static ru.javawebinar.basejava.util.DateUtil.of;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
@@ -88,8 +92,8 @@ public class Organization implements Serializable {
         int orgEntryIndex = getOrgEntryIndex(position);
         if (orgEntryIndex != -1) {
             Position entry = orgEntries.get(orgEntryIndex);
-            entry.setBegin(begin);
-            entry.setEnd(end);
+            entry.setStartDate(begin);
+            entry.setEndDate(end);
             entry.setDescription(description);
         }
     }
@@ -99,41 +103,51 @@ public class Organization implements Serializable {
         private static final long serialVersionUID = 1L;
 
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
-        private LocalDate begin;
+        private LocalDate startDate;
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
-        private LocalDate end;
+        private LocalDate endDate;
         private String title;
         private String description;
 
         public Position() {
         }
 
-        public Position(LocalDate begin, LocalDate end, String title, String description) {
-            begin = begin.withDayOfMonth(1);
-            this.begin = begin;
-            if (end == null) {
-                end = LocalDate.now();
-            }
-            end = end.withDayOfMonth(1);
-            this.end = end;
+        public Position(int startYear, Month startMonth, String title, String description) {
+            this(of(startYear, startMonth), NOW, title, description);
+        }
+
+        public Position(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
+            this(of(startYear, startMonth), of(endYear, endMonth), title, description);
+        }
+
+        public Position(LocalDate startDate, String title, String description) {
+            this(startDate, NOW, title, description);
+        }
+
+        public Position(LocalDate startDate, LocalDate endDate, String title, String description) {
+            Objects.requireNonNull(startDate, "startDate must not be null");
+            Objects.requireNonNull(endDate, "endDate must not be null");
+            Objects.requireNonNull(title, "title must not be null");
+            this.startDate = startDate;
+            this.endDate = endDate;
             this.title = title;
-            this.description = description == null ? "" : description;
+            this.description = description;
         }
 
-        public LocalDate getBegin() {
-            return begin;
+        public LocalDate getStartDate() {
+            return startDate;
         }
 
-        public void setBegin(LocalDate begin) {
-            this.begin = begin;
+        public void setStartDate(LocalDate startDate) {
+            this.startDate = startDate;
         }
 
-        public LocalDate getEnd() {
-            return end;
+        public LocalDate getEndDate() {
+            return endDate;
         }
 
-        public void setEnd(LocalDate end) {
-            this.end = end;
+        public void setEndDate(LocalDate endDate) {
+            this.endDate = endDate;
         }
 
         public String getTitle() {
@@ -157,15 +171,15 @@ public class Organization implements Serializable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Position position = (Position) o;
-            return Objects.equals(begin, position.begin) &&
-                    Objects.equals(end, position.end) &&
+            return Objects.equals(startDate, position.startDate) &&
+                    Objects.equals(endDate, position.endDate) &&
                     Objects.equals(title, position.title) &&
                     Objects.equals(description, position.description);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(begin, end, title, description);
+            return Objects.hash(startDate, endDate, title, description);
         }
     }
 }
