@@ -76,7 +76,7 @@ public class ResumeServlet extends HttpServlet {
                         r.setSections(type, new OrganizationSection(organizations));
                 }
             } else {
-                r.getContacts().remove(type);
+                r.getSections().remove(type);
             }
         }
         if (uuid == null || uuid.trim().length() == 0) {
