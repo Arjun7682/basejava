@@ -1,7 +1,6 @@
 package ru.javawebinar.basejava.web;
 
 import ru.javawebinar.basejava.Config;
-import ru.javawebinar.basejava.EmptyResume;
 import ru.javawebinar.basejava.TestResume;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.storage.Storage;
@@ -112,7 +111,7 @@ public class ResumeServlet extends HttpServlet {
                 r = storage.get(uuid);
                 break;
             case "add":
-                r = EmptyResume.initEmptyResume();
+                r = new Resume("");
                 break;
             default:
                 throw new IllegalStateException("action " + action + " is illegal");

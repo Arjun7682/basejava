@@ -7,14 +7,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import static ru.javawebinar.basejava.util.DateUtil.NOW;
-import static ru.javawebinar.basejava.util.DateUtil.of;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
@@ -40,7 +38,7 @@ public class Organization implements Serializable {
         return orgEntries;
     }
 
-     public Link getCompany() {
+    public Link getCompany() {
         return company;
     }
 

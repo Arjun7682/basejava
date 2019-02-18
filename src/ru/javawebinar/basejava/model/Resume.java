@@ -19,6 +19,27 @@ public class Resume implements Comparable<Resume>, Serializable {
     private String uuid;
     private String fullName;
 
+    {
+        sections.put(SectionType.OBJECTIVE, new TextSection(""));
+        sections.put(SectionType.PERSONAL, new TextSection(""));
+
+        ListSection achievement = new ListSection();
+        achievement.addTextBlock("");
+        sections.put(SectionType.ACHIEVEMENT, achievement);
+
+        ListSection qualifications = new ListSection();
+        qualifications.addTextBlock("");
+        sections.put(SectionType.QUALIFICATIONS, qualifications);
+
+        OrganizationSection work = new OrganizationSection();
+        work.addOrganization(new Organization(new Link("", ""), new Organization.Position()));
+        sections.put(SectionType.EXPERIENCE, work);
+
+        OrganizationSection edu = new OrganizationSection();
+        edu.addOrganization(new Organization(new Link("", ""), new Organization.Position()));
+        sections.put(SectionType.EDUCATION, edu);
+    }
+
     public Resume() {
     }
 
