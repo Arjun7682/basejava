@@ -18,6 +18,7 @@ public class Resume implements Comparable<Resume>, Serializable {
     private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
     private String uuid;
     private String fullName;
+    public static final Resume EMPTY = new Resume();
 
     {
         sections.put(SectionType.OBJECTIVE, new TextSection(""));

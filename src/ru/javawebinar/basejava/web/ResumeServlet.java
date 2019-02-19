@@ -59,6 +59,7 @@ public class ResumeServlet extends HttpServlet {
                         String[] urls = request.getParameterValues(type.name());
                         List<Organization> organizations = new ArrayList<>();
                         for (int i = 0; i < companies.length; i++) {
+                            if (companies[i].equals("")) continue;
                             Link link = new Link(companies[i], urls[i]);
                             String[] startDates = request.getParameterValues(type.name() + i + "startDate");
                             String[] endDates = request.getParameterValues(type.name() + i + "endDate");
@@ -109,9 +110,15 @@ public class ResumeServlet extends HttpServlet {
             case "view":
             case "edit":
                 r = storage.get(uuid);
+
+                ((OrganizationSection) r.getSections(SectionType.EXPERIENCE))
+                        .addOrganization(new Organization(new Link("", ""), new Organization.Position()));
+
+                ((OrganizationSection) r.getSections(SectionType.EDUCATION))
+                        .addOrganization(new Organization(new Link("", ""), new Organization.Position()));
                 break;
             case "add":
-                r = new Resume("");
+                r = Resume.EMPTY;
                 break;
             default:
                 throw new IllegalStateException("action " + action + " is illegal");
