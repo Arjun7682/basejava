@@ -56,7 +56,7 @@ public class ResumeServlet extends HttpServlet {
                     case EXPERIENCE:
                     case EDUCATION:
                         String[] companies = request.getParameterValues(type.name());
-                        String[] urls = request.getParameterValues(type.name());
+                        String[] urls = request.getParameterValues(type.name() + "url");
                         List<Organization> organizations = new ArrayList<>();
                         for (int i = 0; i < companies.length; i++) {
                             if (companies[i].equals("")) continue;
