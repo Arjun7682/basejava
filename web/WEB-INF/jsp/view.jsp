@@ -43,25 +43,28 @@
         <c:when test="${sectionEntry.key == 'EXPERIENCE' || sectionEntry.key == 'EDUCATION'}">
             <c:forEach var="orgEntry" items="<%=((OrganizationSection) sectionEntry.getValue()).getContent()%>">
                 <jsp:useBean id="orgEntry" type="ru.javawebinar.basejava.model.Organization"/>
-                <a href="${orgEntry.company.url}"><h3>${orgEntry.company.text}</h3></a>
-                <table border="0">
-                    <c:forEach var="position" items="${orgEntry.orgEntries}">
-                        <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
-                        <tr>
-                            <td rowspan="2" width="20%" style="vertical-align: top">
-                                    ${DateUtil.format(position.startDate)} - ${DateUtil.format(position.endDate)}
-                            </td>
-                            <td>
-                                <b>${position.title}</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                    ${position.description}
-                            </td>
-                        </tr>
-                    </c:forEach>
-
+                <c:choose>
+                    <c:when test="${!orgEntry.company.text.isEmpty()}">
+                        <a href="${orgEntry.company.url}"><h3>${orgEntry.company.text}</h3></a>
+                        <table border="0">
+                        <c:forEach var="position" items="${orgEntry.orgEntries}">
+                            <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
+                            <tr>
+                                <td rowspan="2" width="20%" style="vertical-align: top">
+                                        ${DateUtil.format(position.startDate)} - ${DateUtil.format(position.endDate)}
+                                </td>
+                                <td>
+                                    <b>${position.title}</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                        ${position.description}
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </c:when>
+                </c:choose>
                 </table>
             </c:forEach>
         </c:when>
